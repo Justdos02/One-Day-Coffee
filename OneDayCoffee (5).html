@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="One Day Coffee">
+<meta name="description" content="One Day Coffee — Coffee Bar Management App">
+<title>One Day Coffee — Coffee Bar Management</title>
+<style>
+/* Offline-safe font stack */
+@font-face {
+  font-family: 'Playfair Display';
+  src: local('Palatino Linotype'), local('Palatino'), local('Book Antiqua'), local('Georgia');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Playfair Display';
+  src: local('Palatino Linotype'), local('Palatino'), local('Book Antiqua'), local('Georgia');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Courier Prime';
+  src: local('Courier New'), local('Courier'), local('Lucida Console');
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Jost';
+  src: local('Helvetica Neue'), local('Helvetica'), local('Segoe UI'), local('Arial');
+  font-weight: 100 900;
+  font-display: swap;
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   ONE DAY COFFEE v3 — DARK + LIGHT THEME
+════════════════════════════════════════ */
+[data-theme="dark"] {
+  --bg:#0d0d0d; --surface:#1a1a1a; --surface2:#2a2a2a; --surface3:#333;
+  --border:#2e2e2e; --text:#e8e5df; --text2:#a0a0a0; --text3:#6a6a6a;
+  --white:#ffffff; --card-bg:#1a1a1a; --input-bg:#2a2a2a;
+  --header-bg:#ffffff; --header-text:#0d0d0d;
+  --form-bg:#ffffff; --form-text:#0d0d0d; --form-input:#f2efe8; --form-border:#d0d0d0;
+}
+[data-theme="light"] {
+  --bg:#f5f2ec; --surface:#ffffff; --surface2:#f0ede6; --surface3:#e8e4dc;
+  --border:#ddd8ce; --text:#1a1a1a; --text2:#5a5a5a; --text3:#9a9a9a;
+  --white:#1a1a1a; --card-bg:#ffffff; --input-bg:#f8f5ef;
+  --header-bg:#1a1a1a; --header-text:#ffffff;
+  --form-bg:#ffffff; --form-text:#1a1a1a; --form-input:#f8f5ef; --form-border:#ddd8ce;
+}
+:root {
+  --green:#8fc48f; --red:#c47878; --yellow:#c4b878; --blue:#78a8c4;
+  --shadow:0 4px 24px rgba(0,0,0,0.25);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;min-height:100vh;font-weight:300;line-height:1.6;transition:background .3s,color .3s;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5;}
+
+/* ── HEADER ── */
+header{background:var(--header-bg);color:var(--header-text);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:3px solid var(--border);gap:1rem;}
+.brand{display:flex;align-items:baseline;gap:.6rem;flex-shrink:0;}
+.brand-name{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;letter-spacing:.06em;color:var(--header-text);line-height:1;}
+.brand-tag{font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--header-text);opacity:.45;border-left:2px solid currentColor;padding-left:.6rem;}
+.header-right{display:flex;align-items:center;gap:.75rem;}
+.theme-btn{background:transparent;border:1px solid var(--header-text);border-radius:20px;padding:.3rem .7rem;cursor:pointer;font-size:.75rem;color:var(--header-text);opacity:.6;transition:opacity .2s;}
+.theme-btn:hover{opacity:1;}
+.stock-alert-badge{background:var(--red);color:#fff;border-radius:20px;padding:.2rem .65rem;font-family:'Courier Prime',monospace;font-size:.65rem;font-weight:700;display:none;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+
+/* ── DESKTOP NAV ── */
+.nav{display:flex;background:var(--header-text);border-radius:8px;overflow:hidden;opacity:.85;}
+.nav-btn{padding:.42rem 1rem;border:none;background:transparent;color:var(--header-bg);cursor:pointer;font-family:'Jost',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;transition:all .2s;border-right:1px solid rgba(255,255,255,.15);white-space:nowrap;}
+.nav-btn:last-child{border-right:none;}
+.nav-btn.active{background:var(--header-bg);color:var(--header-text);}
+.nav-btn:hover:not(.active){background:rgba(255,255,255,.1);}
+
+/* ── MOBILE BOTTOM NAV ── */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);z-index:150;padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(0,0,0,.3);}
+.mobile-nav-inner{display:flex;justify-content:space-around;}
+.mob-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:.4rem .2rem;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:'Jost',sans-serif;font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;transition:color .2s;}
+.mob-btn.active{color:var(--text);}
+.mob-btn-ico{font-size:1.2rem;line-height:1;}
+
+/* ── PAGES ── */
+.page{display:none;padding-bottom:5rem;}
+.page.active{display:block;animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── LAYOUT ── */
+.layout{max-width:1380px;margin:0 auto;padding:2rem 2rem;}
+.grid-2{display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start;}
+.grid-1{display:grid;grid-template-columns:1fr;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.col{display:flex;flex-direction:column;gap:1.5rem;}
+.sticky{position:sticky;top:80px;}
+
+/* ── CARDS ── */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:1.5rem;position:relative;overflow:hidden;transition:background .3s,border-color .3s;}
+.card-accent::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--white);opacity:.2;}
+.card-white{background:var(--form-bg);border-color:var(--form-border);color:var(--form-text);}
+.card-white label{color:var(--form-text);opacity:.6;}
+.card-white input,.card-white select,.card-white textarea{background:var(--form-input);border-color:var(--form-border);color:var(--form-text);}
+.card-white input:focus,.card-white select:focus,.card-white textarea:focus{border-color:var(--form-text);box-shadow:0 0 0 3px rgba(0,0,0,.08);}
+.card-white input::placeholder{color:var(--form-text);opacity:.35;}
+.card-white .sec-label{color:var(--form-text);opacity:.5;}
+.card-white .sec-label::after{background:var(--form-border);}
+
+/* ── SECTION LABELS ── */
+.sec-label{font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:1.1rem;display:flex;align-items:center;gap:.6rem;}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── INNER TABS ── */
+.inner-tabs{display:flex;gap:3px;background:var(--surface2);border-radius:9px;padding:3px;margin-bottom:1.5rem;}
+.inner-tab{flex:1;padding:.48rem;border:none;border-radius:7px;background:transparent;color:var(--text3);cursor:pointer;font-family:'Jost',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;transition:all .2s;}
+.inner-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,.2);}
+.tab-pane{display:none;}.tab-pane.active{display:block;}
+
+/* ── FORMS ── */
+.form-row{display:grid;gap:.8rem;margin-bottom:1rem;align-items:end;}
+.g2{grid-template-columns:1fr 1fr;}.g3{grid-template-columns:2fr 1fr 1fr;}.g4{grid-template-columns:2fr 1fr 1fr auto;}
+label{display:block;font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text3);margin-bottom:.35rem;}
+input,select,textarea{width:100%;background:var(--input-bg);border:1px solid var(--border);color:var(--text);padding:.6rem .85rem;border-radius:8px;font-size:.86rem;font-family:'Jost',sans-serif;font-weight:400;outline:none;transition:border-color .2s,box-shadow .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--text);box-shadow:0 0 0 3px rgba(255,255,255,.07);}
+input::placeholder{color:var(--text3);}
+select option{background:var(--surface2);color:var(--text);}
+.input-row{display:flex;gap:.35rem;}.input-row input{flex:1;}.input-row select{width:80px;flex-shrink:0;}
+.search-wrap{position:relative;margin-bottom:1rem;}
+.search-wrap input{padding-left:2.2rem;}
+.search-ico{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);color:var(--text3);font-size:.9rem;pointer-events:none;}
+
+/* ── BUTTONS ── */
+.btn{padding:.6rem 1.25rem;border-radius:8px;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-weight:600;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.btn-primary{background:var(--text);color:var(--bg);}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.3);}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-outline:hover{color:var(--text);border-color:var(--text2);}
+.btn-danger{background:transparent;color:var(--red);border:1px solid var(--red);opacity:.7;}
+.btn-danger:hover{opacity:1;background:rgba(196,120,120,.1);}
+.btn-full{width:100%;display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.8rem;}
+.btn-sm{padding:.4rem .8rem;font-size:.68rem;}
+.btn-del{background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:.88rem;padding:.35rem .45rem;border-radius:5px;transition:all .15s;line-height:1;}
+.btn-del:hover{color:var(--red);background:rgba(196,120,120,.1);}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);text-align:left;padding:0 .7rem .65rem;border-bottom:1px solid var(--border);}
+.tbl td{padding:.75rem .7rem;font-size:.84rem;border-bottom:1px solid var(--border);vertical-align:middle;opacity:.9;}
+.tbl td:first-child{opacity:1;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+.mono{font-family:'Courier Prime',monospace;font-size:.82rem;}
+.hi{color:var(--text)!important;opacity:1!important;}
+.dim{color:var(--text3);font-size:.78rem;}
+.green{color:var(--green)!important;opacity:1!important;}
+.red{color:var(--red)!important;opacity:1!important;}
+.yellow{color:var(--yellow)!important;opacity:1!important;}
+
+/* ── BADGES ── */
+.badge{font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.07em;padding:.15rem .5rem;border-radius:20px;display:inline-block;}
+.badge-w{background:rgba(255,255,255,.08);color:var(--text2);border:1px solid rgba(255,255,255,.12);}
+.badge-g{background:rgba(143,196,143,.12);color:var(--green);border:1px solid rgba(143,196,143,.2);}
+.badge-r{background:rgba(196,120,120,.12);color:var(--red);border:1px solid rgba(196,120,120,.2);}
+.badge-y{background:rgba(196,184,120,.12);color:var(--yellow);border:1px solid rgba(196,184,120,.2);}
+
+/* ── SUMMARY ROWS ── */
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--border);}
+.sum-row:last-child{border-bottom:none;}
+.sum-lbl{font-size:.82rem;color:var(--text2);}
+.sum-val{font-family:'Courier Prime',monospace;font-size:.88rem;color:var(--text);}
+.sum-row.BIG .sum-lbl{color:var(--text);font-weight:500;}
+.sum-row.BIG .sum-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;}
+.sum-row.profit .sum-val{color:var(--green);}
+.sum-row.loss .sum-val{color:var(--red);}
+.mbar-wrap{background:var(--surface2);border-radius:100px;height:4px;overflow:hidden;margin-top:.4rem;}
+.mbar-fill{height:100%;border-radius:100px;background:var(--text);transition:width .5s cubic-bezier(.4,0,.2,1);}
+
+/* ── SIZE BUTTONS ── */
+.size-row{display:flex;gap:.5rem;margin-bottom:1.1rem;}
+.sz-btn{flex:1;padding:.5rem .3rem;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text3);font-family:'Courier Prime',monospace;font-size:.65rem;letter-spacing:.06em;cursor:pointer;text-align:center;transition:all .2s;}
+.sz-btn .sz-ico{font-size:1rem;display:block;margin-bottom:2px;}
+.sz-btn.active{border-color:var(--text);color:var(--text);background:rgba(255,255,255,.05);}
+
+/* ── RECIPE CARDS ── */
+.rec-card{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.9rem 1.1rem;margin-bottom:.5rem;cursor:pointer;transition:all .2s;display:flex;justify-content:space-between;align-items:center;}
+.rec-card:hover{border-color:var(--text);transform:translateX(3px);}
+.rec-card-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;}
+.rec-card-meta{font-family:'Courier Prime',monospace;font-size:.58rem;color:var(--text3);margin-top:2px;letter-spacing:.05em;text-transform:uppercase;}
+.rec-card-price{font-family:'Playfair Display',serif;font-size:1.05rem;text-align:right;}
+.rec-card-sub{font-family:'Courier Prime',monospace;font-size:.58rem;color:var(--text3);margin-top:2px;text-align:right;}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:2rem 1rem;color:var(--text3);}
+.empty-ico{font-size:1.8rem;margin-bottom:.4rem;display:block;}
+.empty p{font-family:'Courier Prime',monospace;font-size:.75rem;letter-spacing:.05em;}
+
+/* ── PRESETS ── */
+.presets{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem;}
+.preset-btn{padding:.25rem .65rem;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-family:'Courier Prime',monospace;font-size:.65rem;cursor:pointer;transition:all .2s;}
+.preset-btn:hover{border-color:var(--text);color:var(--text);}
+
+/* ── SETTINGS ── */
+.setting-row{display:flex;align-items:center;gap:1rem;margin-bottom:.85rem;}
+.setting-row label{margin:0;flex:1;}
+.setting-row input{width:85px;flex-shrink:0;text-align:right;}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.75rem;}
+.kpi{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.1rem;position:relative;overflow:hidden;}
+.kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.kpi.k-rev::after{background:var(--text);opacity:.5;}
+.kpi.k-cost::after{background:var(--red);opacity:.7;}
+.kpi.k-profit::after{background:var(--green);opacity:.7;}
+.kpi.k-cups::after{background:var(--yellow);opacity:.7;}
+.kpi-lbl{font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);margin-bottom:.4rem;}
+.kpi-val{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:var(--text);line-height:1;}
+.kpi-sub{font-family:'Courier Prime',monospace;font-size:.62rem;color:var(--text3);margin-top:.3rem;}
+
+/* ── BAR CHART ── */
+.chart-wrap{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.75rem;}
+.chart-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;}
+.chart-title{font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;}
+.chart-badge{font-family:'Courier Prime',monospace;font-size:.65rem;color:var(--text3);text-align:right;line-height:1.6;}
+.bars-area{display:flex;gap:5px;align-items:flex-end;height:130px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;}
+.bar{width:100%;border-radius:3px 3px 0 0;transition:height .5s cubic-bezier(.4,0,.2,1);cursor:pointer;}
+.bar:hover{opacity:.75;}
+.bar-rev{background:var(--text);opacity:.85;}.bar-cost{background:var(--text3);opacity:.6;}
+.bar-lbl{font-family:'Courier Prime',monospace;font-size:.55rem;color:var(--text3);white-space:nowrap;}
+.chart-legend{display:flex;gap:1rem;margin-top:.75rem;}
+.legend-item{display:flex;align-items:center;gap:.35rem;font-family:'Courier Prime',monospace;font-size:.62rem;color:var(--text3);}
+.legend-dot{width:9px;height:9px;border-radius:2px;}
+
+/* ── PERIOD TABS ── */
+.period-tabs{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.5rem;}
+.period-tab{flex:1;padding:.5rem;border:none;background:transparent;color:var(--text3);cursor:pointer;font-family:'Courier Prime',monospace;font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;transition:all .2s;border-right:1px solid var(--border);}
+.period-tab:last-child{border-right:none;}
+.period-tab.active{background:var(--text);color:var(--bg);}
+
+/* ── ALL-TIME PANEL ── */
+.alltime-panel{background:var(--form-bg);color:var(--form-text);border-radius:14px;padding:1.5rem;margin-bottom:1.75rem;display:none;border:1px solid var(--form-border);}
+.alltime-panel.visible{display:block;}
+.at-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-bottom:1rem;}
+.at-kpi{border:1px solid var(--form-border);border-radius:9px;padding:.85rem;text-align:center;}
+.at-kpi-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--form-text);}
+.at-kpi-lbl{font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--form-text);opacity:.45;margin-top:.18rem;}
+.at-kpi.hl{background:var(--form-text);}.at-kpi.hl .at-kpi-val,.at-kpi.hl .at-kpi-lbl{color:var(--form-bg)!important;opacity:1!important;}
+.best-strip{background:var(--form-input);border:1px solid var(--form-border);border-radius:9px;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem;}
+.at-stats-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+.at-stat-box{background:var(--form-input);border:1px solid var(--form-border);border-radius:8px;padding:.75rem .9rem;}
+.at-stat-lbl{font-family:'Courier Prime',monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--form-text);opacity:.45;}
+.at-stat-val{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--form-text);margin-top:.15rem;}
+
+/* ── SALE FORM ── */
+.sale-date-group{font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text3);padding:.65rem .7rem .35rem;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02);display:flex;justify-content:space-between;align-items:center;}
+.sale-date-subtotal{color:var(--text2);}
+.recipe-info-pill{background:var(--form-input);border:1px solid var(--form-border);border-radius:8px;padding:.55rem .8rem;margin-top:.4rem;display:none;flex-wrap:wrap;}
+.recipe-info-pill.visible{display:flex;}
+.rip-item{flex:1;min-width:60px;padding:.18rem .4rem;border-right:1px solid var(--form-border);}
+.rip-item:last-child{border-right:none;}
+.rip-lbl{font-family:'Courier Prime',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--form-text);opacity:.45;}
+.rip-val{font-family:'Courier Prime',monospace;font-size:.78rem;font-weight:700;color:var(--form-text);margin-top:1px;}
+
+/* ── PREVIEW CARD ── */
+.preview-card{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:1rem 1.1rem;margin-bottom:.9rem;position:relative;}
+.preview-card::before{content:'PREVIEW';position:absolute;top:.6rem;right:.8rem;font-family:'Courier Prime',monospace;font-size:.5rem;letter-spacing:.18em;color:var(--text3);}
+.preview-row{display:flex;justify-content:space-between;align-items:center;padding:.28rem 0;border-bottom:1px solid var(--border);}
+.preview-row:last-child{border-bottom:none;}
+.preview-lbl{font-size:.76rem;color:var(--text2);}
+.preview-val{font-family:'Courier Prime',monospace;font-size:.82rem;}
+.preview-profit-row{display:flex;justify-content:space-between;align-items:center;padding:.42rem 0 .25rem;border-top:1px solid var(--border);margin-top:.25rem;}
+.preview-profit-lbl{font-size:.85rem;font-weight:600;}
+.preview-profit-val{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;transition:color .25s,transform .15s;}
+.preview-profit-val.pos{color:var(--green);}.preview-profit-val.neg{color:var(--red);}
+.preview-profit-val.bump{transform:scale(1.08);}
+.preview-margin-row{display:flex;align-items:center;gap:.65rem;margin-top:.45rem;}
+.preview-mbar-outer{flex:1;background:var(--surface2);border-radius:100px;height:3px;overflow:hidden;}
+.preview-mbar-inner{height:100%;border-radius:100px;transition:width .4s,background .3s;}
+.preview-margin-pct{font-family:'Courier Prime',monospace;font-size:.65rem;color:var(--text2);min-width:4.5rem;text-align:right;}
+.preview-note-row{font-family:'Courier Prime',monospace;font-size:.6rem;color:var(--text3);margin-top:.42rem;padding-top:.35rem;border-top:1px dashed var(--border);display:flex;justify-content:space-between;}
+
+/* ── TOP SELLERS ── */
+.seller-row{margin-bottom:.9rem;}
+.seller-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;}
+.seller-name{font-size:.84rem;font-weight:500;}
+.seller-cups{font-family:'Courier Prime',monospace;font-size:.75rem;}
+.seller-bar-outer{background:var(--surface2);border-radius:100px;height:4px;overflow:hidden;}
+.seller-bar-fill{height:100%;border-radius:100px;background:var(--text);transition:width .6s cubic-bezier(.4,0,.2,1);}
+.seller-bottom{display:flex;justify-content:space-between;margin-top:.22rem;}
+
+/* ── COZY QUOTES ── */
+.cozy-quote-wrap{border-top:1px solid var(--border);margin-top:1.1rem;padding-top:1.1rem;}
+.cozy-quote-text{font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;color:var(--text2);text-align:center;line-height:1.8;min-height:2.6rem;transition:opacity .4s;}
+.cozy-quote-attr{font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);text-align:center;margin-top:.35rem;transition:opacity .4s;}
+.quote-dots{display:flex;justify-content:center;gap:4px;margin-top:.6rem;}
+.q-dot{width:5px;height:5px;border-radius:50%;background:var(--border);cursor:pointer;transition:background .2s;}
+.q-dot.active{background:var(--text2);}
+
+/* ── INVENTORY ── */
+.inv-item{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.9rem 1rem;margin-bottom:.5rem;transition:border-color .2s;}
+.inv-item.low{border-color:var(--red);}
+.inv-item.critical{border-color:var(--red);background:rgba(196,120,120,.06);}
+.inv-header{display:flex;justify-content:space-between;align-items:center;}
+.inv-name{font-weight:500;font-size:.88rem;}
+.inv-cat{font-family:'Courier Prime',monospace;font-size:.58rem;color:var(--text3);}
+.inv-bar-row{display:flex;align-items:center;gap:.75rem;margin-top:.5rem;}
+.inv-bar-outer{flex:1;background:var(--surface);border-radius:100px;height:4px;overflow:hidden;}
+.inv-bar-fill{height:100%;border-radius:100px;transition:width .5s,background .3s;}
+.inv-qty-label{font-family:'Courier Prime',monospace;font-size:.68rem;color:var(--text2);min-width:5rem;text-align:right;}
+
+/* ── EXPENSE TRACKER ── */
+.exp-cat-badge{font-family:'Courier Prime',monospace;font-size:.6rem;padding:.15rem .45rem;border-radius:4px;border:1px solid var(--border);color:var(--text3);}
+
+/* ── GOAL TRACKER ── */
+.goal-card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.75rem;}
+.goal-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.75rem;}
+.goal-title{font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;}
+.goal-pct{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;}
+.goal-bar-outer{background:var(--surface2);border-radius:100px;height:8px;overflow:hidden;margin-bottom:.5rem;}
+.goal-bar-fill{height:100%;border-radius:100px;background:var(--text);transition:width .6s cubic-bezier(.4,0,.2,1);}
+.goal-meta{display:flex;justify-content:space-between;font-family:'Courier Prime',monospace;font-size:.65rem;color:var(--text3);}
+
+/* ── SHIFT LOG ── */
+.shift-card{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.9rem 1.1rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center;}
+.shift-name{font-weight:500;font-size:.88rem;}
+.shift-meta{font-family:'Courier Prime',monospace;font-size:.6rem;color:var(--text3);margin-top:2px;}
+.shift-hours{font-family:'Courier Prime',monospace;font-size:.82rem;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:5.5rem;right:1.5rem;background:var(--text);color:var(--bg);padding:.65rem 1.1rem;border-radius:9px;font-family:'Jost',sans-serif;font-weight:600;font-size:.8rem;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:9998;box-shadow:0 4px 16px rgba(0,0,0,.4);max-width:280px;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:none;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:1.75rem;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;position:relative;}
+.modal-close{position:absolute;top:1rem;right:1rem;background:transparent;border:none;color:var(--text2);cursor:pointer;font-size:1.1rem;padding:.3rem;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:1.25rem;}
+
+/* ── PRINT MENU MODAL ── */
+@media print {
+  body * { visibility: hidden; }
+  .print-area, .print-area * { visibility: visible; }
+  .print-area { position: fixed; top: 0; left: 0; width: 100%; }
+  header, .mobile-nav, .toast { display: none !important; }
+}
+.print-area { font-family: 'Playfair Display', serif; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .grid-2{grid-template-columns:1fr;}.sticky{position:static;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .grid-3{grid-template-columns:1fr 1fr;}
+  .grid-4{grid-template-columns:repeat(2,1fr);}
+  .layout{padding:1.25rem 1rem;}
+  header{padding:0 1rem;}
+  .brand-tag{display:none;}
+  .nav{display:none;}
+  .mobile-nav{display:block;}
+  .page{padding-bottom:5.5rem;}
+  .toast{bottom:5rem;}
+  .at-kpi-row{grid-template-columns:1fr 1fr 1fr;}
+}
+@media (max-width: 520px) {
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .form-row.g4{grid-template-columns:1fr 1fr;}
+  .at-kpi-row{grid-template-columns:1fr;}
+  .at-stats-row{grid-template-columns:1fr;}
+  .grid-3{grid-template-columns:1fr;}
+}
+
+/* ════ 6 NEW FEATURES CSS ════ */
+
+/* ── QUICK-SELL BUTTONS ── */
+.quick-sell-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.65rem;margin-bottom:1.5rem;}
+.qs-btn{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:.85rem .6rem .7rem;cursor:pointer;text-align:center;transition:all .2s;position:relative;overflow:hidden;}
+.qs-btn:hover{border-color:var(--text);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.qs-btn:active{transform:translateY(0);}
+.qs-btn-img{width:52px;height:52px;border-radius:50%;object-fit:cover;margin:0 auto .4rem;display:block;background:var(--surface);border:2px solid var(--border);}
+.qs-btn-img-placeholder{width:52px;height:52px;border-radius:50%;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--surface);border:2px solid var(--border);}
+.qs-btn-name{font-size:.78rem;font-weight:600;color:var(--text);line-height:1.2;margin-bottom:.2rem;}
+.qs-btn-price{font-family:'Courier Prime',monospace;font-size:.72rem;color:var(--green);}
+.qs-btn-size{font-family:'Courier Prime',monospace;font-size:.6rem;color:var(--text3);}
+.qs-sold-flash{position:absolute;inset:0;background:rgba(143,196,143,.2);border-radius:12px;pointer-events:none;opacity:0;transition:opacity .3s;}
+
+/* ── DUPLICATE RECIPE BUTTON ── */
+.rec-card-actions{display:flex;gap:.35rem;opacity:0;transition:opacity .2s;}
+.rec-card:hover .rec-card-actions{opacity:1;}
+.rec-action-btn{background:transparent;border:1px solid var(--border);border-radius:6px;padding:.2rem .45rem;cursor:pointer;font-size:.65rem;color:var(--text3);transition:all .15s;font-family:'Courier Prime',monospace;}
+.rec-action-btn:hover{color:var(--text);border-color:var(--text2);}
+
+/* ── DRINK PHOTO on recipe card ── */
+.rec-photo-wrap{width:42px;height:42px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.rec-photo-wrap img{width:100%;height:100%;object-fit:cover;}
+.photo-upload-zone{border:1.5px dashed var(--border);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:1rem;}
+.photo-upload-zone:hover{border-color:var(--text2);}
+.photo-upload-zone input{display:none;}
+.photo-preview{width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto .5rem;display:block;border:2px solid var(--border);}
+.photo-label{font-family:'Courier Prime',monospace;font-size:.65rem;color:var(--text3);letter-spacing:.08em;}
+
+/* ── ORDER QUEUE ── */
+.order-grid{display:grid;grid-template-columns:1fr 320px;gap:1.75rem;align-items:start;}
+.order-queue-list{display:flex;flex-direction:column;gap:.6rem;}
+.order-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem;display:flex;align-items:center;gap:.85rem;transition:all .3s;position:relative;}
+.order-item.done{opacity:.4;border-style:dashed;}
+.order-item.done .order-name{text-decoration:line-through;}
+.order-number{width:32px;height:32px;border-radius:50%;background:var(--text);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;flex-shrink:0;}
+.order-item.done .order-number{background:var(--border);}
+.order-name{font-weight:600;font-size:.9rem;flex:1;}
+.order-drink{font-family:'Courier Prime',monospace;font-size:.7rem;color:var(--text2);margin-top:1px;}
+.order-time{font-family:'Courier Prime',monospace;font-size:.62rem;color:var(--text3);}
+.order-done-btn{background:transparent;border:1.5px solid var(--border);border-radius:8px;padding:.3rem .65rem;cursor:pointer;font-size:.78rem;color:var(--text2);transition:all .2s;font-family:'Jost',sans-serif;font-weight:600;}
+.order-done-btn:hover{background:var(--green);border-color:var(--green);color:#0d0d0d;}
+.order-item.done .order-done-btn{background:transparent;border-color:var(--border);color:var(--text3);cursor:default;}
+.order-stats-row{display:flex;gap:.75rem;margin-bottom:1.25rem;}
+.order-stat{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.75rem;text-align:center;}
+.order-stat-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;}
+.order-stat-lbl{font-family:'Courier Prime',monospace;font-size:.58rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:.1rem;}
+
+/* ── CALENDAR VIEW ── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-header-cell{font-family:'Courier Prime',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);text-align:center;padding:.4rem 0;}
+.cal-cell{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;border:1px solid transparent;}
+.cal-cell.empty{background:transparent;cursor:default;}
+.cal-cell.has-sales{border-color:var(--border);}
+.cal-cell:hover:not(.empty){border-color:var(--text2);}
+.cal-cell.today{border-color:var(--text)!important;}
+.cal-day{font-family:'Courier Prime',monospace;font-size:.7rem;color:var(--text2);}
+.cal-rev{font-family:'Courier Prime',monospace;font-size:.55rem;color:var(--green);margin-top:1px;}
+.cal-tooltip{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:.5rem .7rem;white-space:nowrap;font-family:'Courier Prime',monospace;font-size:.65rem;z-index:50;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:var(--shadow);}
+.cal-cell:hover .cal-tooltip{opacity:1;}
+.cal-month-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.cal-month-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-style:italic;}
+.cal-nav-btn{background:transparent;border:1px solid var(--border);border-radius:6px;padding:.3rem .65rem;cursor:pointer;color:var(--text2);font-size:.85rem;transition:all .2s;}
+.cal-nav-btn:hover{color:var(--text);border-color:var(--text2);}
+.cal-legend{display:flex;align-items:center;gap:.5rem;margin-top:.75rem;font-family:'Courier Prime',monospace;font-size:.62rem;color:var(--text3);}
+.cal-legend-bar{display:flex;gap:2px;}
+.cal-legend-cell{width:14px;height:14px;border-radius:3px;}
+
+/* ── LINE CHART ── */
+.line-chart-wrap{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.75rem;}
+.line-chart-svg{width:100%;height:160px;overflow:visible;}
+.lc-axis-label{font-family:'Courier Prime',monospace;font-size:9px;fill:var(--text3);}
+.lc-line-rev{fill:none;stroke:var(--text);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.lc-line-profit{fill:none;stroke:var(--green);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:4 2;}
+.lc-dot{cursor:pointer;transition:r .15s;}
+.lc-area{opacity:.07;}
+.lc-legend{display:flex;gap:1.25rem;margin-top:.75rem;}
+
+@media(max-width:900px){
+  .order-grid{grid-template-columns:1fr;}
+  .quick-sell-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:520px){
+  .quick-sell-grid{grid-template-columns:repeat(2,1fr);}
+  .cal-day{font-size:.6rem;} .cal-rev{display:none;}
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="brand">
+    <span class="brand-name">ONE DAY COFFEE</span>
+    <span class="brand-tag">☕ Coffee Bar Manager</span>
+  </div>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showPage('costing')">⚗ Costing</button>
+    <button class="nav-btn" onclick="showPage('sales')">📊 Sales</button>
+    <button class="nav-btn" onclick="showPage('inventory')">📦 Inventory</button>
+    <button class="nav-btn" onclick="showPage('expenses')">💸 Expenses</button>
+    <button class="nav-btn" onclick="showPage('staff')">👥 Staff</button>
+    <button class="nav-btn" onclick="showPage('orders')">🧾 Orders</button>
+    <button class="nav-btn" onclick="showPage('reports')">📋 Reports</button>
+  </nav>
+  <div class="header-right">
+    <span class="stock-alert-badge" id="stock-alert-badge">⚠ Low Stock</span>
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+  </div>
+</header>
+
+<!-- ══ MOBILE NAV ══ -->
+<div class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <button class="mob-btn active" onclick="showPage('costing')"><span class="mob-btn-ico">⚗</span>Cost</button>
+    <button class="mob-btn" onclick="showPage('sales')"><span class="mob-btn-ico">📊</span>Sales</button>
+    <button class="mob-btn" onclick="showPage('inventory')"><span class="mob-btn-ico">📦</span>Stock</button>
+    <button class="mob-btn" onclick="showPage('expenses')"><span class="mob-btn-ico">💸</span>Costs</button>
+    <button class="mob-btn" onclick="showPage('staff')"><span class="mob-btn-ico">👥</span>Staff</button>
+    <button class="mob-btn" onclick="showPage('orders')"><span class="mob-btn-ico">🧾</span>Orders</button>
+    <button class="mob-btn" onclick="showPage('reports')"><span class="mob-btn-ico">📋</span>Reports</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: COSTING
+══════════════════════════════════════ -->
+<div id="page-costing" class="page active">
+<div class="layout grid-2">
+  <div class="col">
+    <div class="card">
+      <div class="inner-tabs">
+        <button class="inner-tab active" onclick="switchInner('ings')">☕ Ingredients</button>
+        <button class="inner-tab" onclick="switchInner('recs')">📋 Saved Recipes</button>
+      </div>
+      <div id="itab-ings" class="tab-pane active">
+        <div class="sec-label">Add Ingredient</div>
+        <div class="form-row g4" style="align-items:end;">
+          <div><label>Name</label><input type="text" id="ing-name" placeholder="e.g. Espresso beans"></div>
+          <div><label>Price (₱)</label><input type="number" id="ing-price" placeholder="0.00" min="0" step="0.01"></div>
+          <div><label>Qty / Unit</label>
+            <div class="input-row">
+              <input type="number" id="ing-qty" placeholder="250" min="0" step="0.1">
+              <select id="ing-unit"><option>g</option><option>kg</option><option>ml</option><option>L</option><option>pcs</option><option>oz</option><option>lb</option><option>tbsp</option><option>tsp</option><option>pump</option></select>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="addIng()">+ Add</button>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label>Category</label>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.35rem;">
+            <label style="display:flex;align-items:center;gap:.3rem;cursor:pointer;font-family:Jost;font-size:.8rem;letter-spacing:0;text-transform:none;color:var(--text);margin:0;"><input type="radio" name="ing-cat" value="espresso" style="width:auto;accent-color:var(--text);" checked><span class="badge badge-w">☕ Espresso</span></label>
+            <label style="display:flex;align-items:center;gap:.3rem;cursor:pointer;font-family:Jost;font-size:.8rem;letter-spacing:0;text-transform:none;color:var(--text);margin:0;"><input type="radio" name="ing-cat" value="milk" style="width:auto;accent-color:var(--text);"><span class="badge badge-w">🥛 Milk</span></label>
+            <label style="display:flex;align-items:center;gap:.3rem;cursor:pointer;font-family:Jost;font-size:.8rem;letter-spacing:0;text-transform:none;color:var(--text);margin:0;"><input type="radio" name="ing-cat" value="syrup" style="width:auto;accent-color:var(--text);"><span class="badge badge-w">🍬 Syrup</span></label>
+            <label style="display:flex;align-items:center;gap:.3rem;cursor:pointer;font-family:Jost;font-size:.8rem;letter-spacing:0;text-transform:none;color:var(--text);margin:0;"><input type="radio" name="ing-cat" value="cup" style="width:auto;accent-color:var(--text);"><span class="badge badge-w">🥤 Cup/Pack</span></label>
+            <label style="display:flex;align-items:center;gap:.3rem;cursor:pointer;font-family:Jost;font-size:.8rem;letter-spacing:0;text-transform:none;color:var(--text);margin:0;"><input type="radio" name="ing-cat" value="other" style="width:auto;accent-color:var(--text);"><span class="badge badge-w">+ Other</span></label>
+          </div>
+        </div>
+        <div class="sec-label">Ingredient Database</div>
+        <table class="tbl"><thead><tr><th>Name</th><th>Cat</th><th>Package</th><th>Cost/Unit</th><th></th></tr></thead>
+        <tbody id="ing-tbody"><tr><td colspan="5"><div class="empty"><span class="empty-ico">🫘</span><p>No ingredients yet.</p></div></td></tr></tbody></table>
+      </div>
+      <div id="itab-recs" class="tab-pane">
+        <div class="sec-label">Saved Recipes</div>
+        <div id="rec-list"><div class="empty"><span class="empty-ico">📖</span><p>No recipes saved yet.</p></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Recipe Builder</div>
+      <div class="photo-upload-zone" onclick="document.getElementById('rec-photo-input').click()" id="photo-zone">
+        <input type="file" id="rec-photo-input" accept="image/*" onchange="handleRecipePhoto(event)">
+        <div id="photo-preview-wrap">
+          <div style="font-size:1.8rem;margin-bottom:.3rem;">📷</div>
+          <div class="photo-label">Click to add a drink photo (optional)</div>
+        </div>
+      </div>
+      <input type="hidden" id="rec-photo" value="">
+      <div class="form-row g2">
+        <div><label>Drink Name</label><input type="text" id="rec-name" placeholder="e.g. Iced Caramel Latte" oninput="recalcCost()"></div>
+        <div><label>Batch / Cups</label><input type="number" id="rec-yield" value="1" min="1" oninput="recalcCost()"></div>
+      </div>
+      <label>Cup Size</label>
+      <div class="size-row" style="margin-top:.35rem;">
+        <div class="sz-btn active" onclick="setSize(this,'Medium')"><span class="sz-ico">☕</span>Medium<br><small style="font-size:.55rem;color:var(--text3)">12oz</small></div>
+        <div class="sz-btn" onclick="setSize(this,'Large')"><span class="sz-ico">🧋</span>Large<br><small style="font-size:.55rem;color:var(--text3)">16oz</small></div>
+      </div>
+      <input type="hidden" id="rec-size" value="Medium">
+      <div class="sec-label" style="margin-top:1rem;">Quick Presets</div>
+      <div class="presets" id="presets-wrap"></div>
+      <div class="sec-label">Add Ingredient</div>
+      <div class="form-row g4" style="align-items:end;">
+        <div><label>Ingredient</label><select id="rec-ing-sel"><option value="">— Choose —</option></select></div>
+        <div><label>Amount</label><input type="number" id="rec-ing-amt" placeholder="18" min="0" step="0.1"></div>
+        <div><label>Unit</label><select id="rec-ing-unit"><option>g</option><option>kg</option><option>ml</option><option>L</option><option>pcs</option><option>oz</option><option>lb</option><option>tbsp</option><option>tsp</option><option>pump</option></select></div>
+        <button class="btn btn-primary" onclick="addRecIng()">+ Add</button>
+      </div>
+      <table class="tbl"><thead><tr><th>Ingredient</th><th>Amount</th><th>Line Cost</th><th></th></tr></thead>
+      <tbody id="rec-ing-tbody"><tr><td colspan="4"><div class="empty"><span class="empty-ico">🫗</span><p>Add ingredients above.</p></div></td></tr></tbody></table>
+      <div style="margin-top:1.25rem;"><label>Method / Notes</label><textarea id="rec-notes" rows="3" placeholder="Brew method, pour order, garnish…"></textarea></div>
+      <div style="display:flex;gap:.6rem;justify-content:flex-end;margin-top:1rem;">
+        <button class="btn btn-outline btn-sm" onclick="clearRecipe()">Clear</button>
+        <button class="btn btn-outline btn-sm" onclick="openMenuModal()">🖨 Print Menu</button>
+        <button class="btn btn-primary" onclick="saveRecipe()">💾 Save Recipe</button>
+      </div>
+      <div class="cozy-quote-wrap">
+        <div class="cozy-quote-text" id="quote-text"></div>
+        <div class="cozy-quote-attr" id="quote-attr"></div>
+        <div class="quote-dots" id="quote-dots"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col sticky">
+    <div class="card">
+      <div class="sec-label">Cost Summary</div>
+      <div class="sum-row"><span class="sum-lbl">Drink</span><span class="sum-val" id="s-name" style="font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;">—</span></div>
+      <div class="sum-row"><span class="sum-lbl">Size</span><span class="sum-val" id="s-size">Medium</span></div>
+      <div class="sum-row"><span class="sum-lbl">Ingredient Total</span><span class="sum-val" id="s-total">₱0.00</span></div>
+      <div class="sum-row"><span class="sum-lbl">Batch Size</span><span class="sum-val" id="s-yield">1 cup</span></div>
+      <div class="sum-row BIG"><span class="sum-lbl">Cost per Cup</span><span class="sum-val" id="s-per">₱0.00</span></div>
+      <div class="sum-row"><span class="sum-lbl">Menu Price</span><span class="sum-val hi" id="s-sell">₱0.00</span></div>
+      <div class="sum-row profit" id="s-profit-row"><span class="sum-lbl">Profit per Cup</span><span class="sum-val" id="s-profit">₱0.00</span></div>
+      <div style="margin-top:.6rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem;">
+          <span style="font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);">Profit Margin</span>
+          <span class="badge badge-g" id="s-margin-pct">0%</span>
+        </div>
+        <div class="mbar-wrap"><div class="mbar-fill" id="s-mbar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Pricing Settings</div>
+      <div class="setting-row"><label>Overhead / Misc (%)</label><input type="number" id="overhead" value="15" min="0" oninput="recalcCost()"></div>
+      <div class="setting-row"><label>Target Markup (%)</label><input type="number" id="markup" value="200" min="0" oninput="recalcCost()"></div>
+      <div class="setting-row" style="margin-bottom:0;"><label>Currency Symbol</label><input type="text" id="currency" value="₱" maxlength="3" style="width:55px;text-align:center;" oninput="recalcCost()"></div>
+    </div>
+    <button class="btn btn-outline btn-full" onclick="exportRecipe()">↓ Export Recipe Card</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: SALES
+══════════════════════════════════════ -->
+<div id="page-sales" class="page">
+<div class="layout">
+
+  <!-- GOAL TRACKER -->
+  <div class="goal-card" id="goal-section">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem;">
+      <div class="goal-header" style="margin-bottom:0;">
+        <div class="goal-title">Daily Revenue Goal</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;">
+        <div class="goal-pct" id="goal-pct">0%</div>
+        <div style="display:flex;gap:.4rem;align-items:center;">
+          <input type="number" id="goal-amount" placeholder="e.g. 3000" style="width:110px;font-size:.82rem;padding:.38rem .6rem;" oninput="updateGoal()">
+          <span style="font-family:'Courier Prime',monospace;font-size:.65rem;color:var(--text3);">target</span>
+        </div>
+      </div>
+    </div>
+    <div class="goal-bar-outer"><div class="goal-bar-fill" id="goal-bar" style="width:0%"></div></div>
+    <div class="goal-meta">
+      <span id="goal-earned">₱0 earned today</span>
+      <span id="goal-remaining">Set a target above</span>
+    </div>
+  </div>
+
+  <!-- QUICK-SELL BUTTONS -->
+  <div class="card" style="margin-bottom:1.5rem;" id="quick-sell-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem;">
+      <div class="sec-label" style="margin-bottom:0;flex:1;">⚡ Quick Sell</div>
+      <span style="font-family:'Courier Prime',monospace;font-size:.62rem;color:var(--text3);">1-tap to record a sale</span>
+    </div>
+    <div class="quick-sell-grid" id="quick-sell-grid">
+      <div class="empty" style="padding:.75rem;grid-column:1/-1;"><span class="empty-ico" style="font-size:1.3rem;">⚡</span><p>Save recipes in Costing to see quick-sell buttons.</p></div>
+    </div>
+  </div>
+
+  <div class="period-tabs">
+    <button class="period-tab active" onclick="setPeriod('day',this)">Today</button>
+    <button class="period-tab" onclick="setPeriod('week',this)">This Week</button>
+    <button class="period-tab" onclick="setPeriod('month',this)">This Month</button>
+    <button class="period-tab" onclick="setPeriod('all',this)">All Time</button>
+  </div>
+
+  <div class="alltime-panel" id="alltime-panel">
+    <div class="sec-label">All-Time Business Overview</div>
+    <div class="at-kpi-row">
+      <div class="at-kpi"><div class="at-kpi-val" id="at-rev">₱0</div><div class="at-kpi-lbl">Total Revenue</div></div>
+      <div class="at-kpi hl"><div class="at-kpi-val" id="at-profit">₱0</div><div class="at-kpi-lbl">Net Profit</div></div>
+      <div class="at-kpi"><div class="at-kpi-val" id="at-cups">0</div><div class="at-kpi-lbl">Cups Sold</div></div>
+    </div>
+    <div class="best-strip">
+      <div><div style="font-family:'Courier Prime',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;opacity:.45;">☆ Best Sales Day</div><div style="font-family:'Playfair Display',serif;font-size:.95rem;margin-top:.1rem;" id="at-bestday">—</div></div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;" id="at-bestday-rev">—</div>
+    </div>
+    <div class="at-stats-row">
+      <div class="at-stat-box"><div class="at-stat-lbl">Avg Revenue / Day</div><div class="at-stat-val" id="at-avg-rev">—</div></div>
+      <div class="at-stat-box"><div class="at-stat-lbl">Overall Margin</div><div class="at-stat-val" id="at-margin">—</div></div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi k-rev"><div class="kpi-lbl">Revenue</div><div class="kpi-val" id="kpi-rev">₱0</div><div class="kpi-sub" id="kpi-rev-sub">—</div></div>
+    <div class="kpi k-cost"><div class="kpi-lbl">Cost</div><div class="kpi-val" id="kpi-cost">₱0</div><div class="kpi-sub" id="kpi-cost-sub">—</div></div>
+    <div class="kpi k-profit"><div class="kpi-lbl">Profit</div><div class="kpi-val" id="kpi-profit">₱0</div><div class="kpi-sub" id="kpi-profit-sub">—</div></div>
+    <div class="kpi k-cups"><div class="kpi-lbl">Cups Sold</div><div class="kpi-val" id="kpi-cups">0</div><div class="kpi-sub" id="kpi-cups-sub">—</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:1.75rem;align-items:start;">
+    <div>
+      <!-- ANALYTICS TABS -->
+      <div class="card" style="margin-bottom:1.75rem;">
+        <div class="inner-tabs" style="margin-bottom:1.25rem;">
+          <button class="inner-tab active" onclick="switchAnalytics('bar')">📊 Bar</button>
+          <button class="inner-tab" onclick="switchAnalytics('line')">📈 Trend</button>
+          <button class="inner-tab" onclick="switchAnalytics('calendar')">🗓 Calendar</button>
+        </div>
+
+        <!-- BAR CHART TAB -->
+        <div id="analytics-bar" class="tab-pane active">
+          <div class="chart-header">
+            <div class="chart-title" id="chart-title">Revenue vs Cost</div>
+            <div class="chart-badge" id="chart-badge"></div>
+          </div>
+          <div class="bars-area" id="bars-wrap"></div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--text);opacity:.85;"></div>Revenue</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--text3);opacity:.6;"></div>Cost</div>
+          </div>
+        </div>
+
+        <!-- LINE CHART TAB -->
+        <div id="analytics-line" class="tab-pane">
+          <div class="chart-header">
+            <div class="chart-title" id="line-chart-title">Monthly Profit Trend</div>
+            <div class="chart-badge" id="line-chart-badge"></div>
+          </div>
+          <svg class="line-chart-svg" id="line-chart-svg" viewBox="0 0 600 160" preserveAspectRatio="none"></svg>
+          <div class="lc-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--text)"></div>Revenue</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div>Profit</div>
+          </div>
+        </div>
+
+        <!-- CALENDAR TAB -->
+        <div id="analytics-calendar" class="tab-pane">
+          <div class="cal-month-nav">
+            <button class="cal-nav-btn" onclick="calPrev()">&#8249;</button>
+            <div class="cal-month-title" id="cal-month-title">—</div>
+            <button class="cal-nav-btn" onclick="calNext()">&#8250;</button>
+          </div>
+          <div class="cal-grid" id="cal-header-row">
+            <div class="cal-header-cell">Sun</div><div class="cal-header-cell">Mon</div>
+            <div class="cal-header-cell">Tue</div><div class="cal-header-cell">Wed</div>
+            <div class="cal-header-cell">Thu</div><div class="cal-header-cell">Fri</div>
+            <div class="cal-header-cell">Sat</div>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="cal-legend">
+            <span>Less</span>
+            <div class="cal-legend-bar">
+              <div class="cal-legend-cell" style="background:var(--surface2)"></div>
+              <div class="cal-legend-cell" style="background:rgba(143,196,143,.25)"></div>
+              <div class="cal-legend-cell" style="background:rgba(143,196,143,.5)"></div>
+              <div class="cal-legend-cell" style="background:rgba(143,196,143,.75)"></div>
+              <div class="cal-legend-cell" style="background:var(--green)"></div>
+            </div>
+            <span>More</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <div class="sec-label" style="margin-bottom:0;flex:1;">Sales Log</div>
+          <div style="display:flex;gap:.5rem;margin-left:1rem;">
+            <input type="text" id="sales-search" placeholder="Search drink…" style="width:150px;font-size:.78rem;padding:.35rem .7rem;" oninput="renderSalesLog(filterSales(curPeriod))">
+            <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ CSV</button>
+          </div>
+        </div>
+        <div id="sales-log-wrap"><div class="empty"><span class="empty-ico">📋</span><p>No sales recorded yet.</p></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card card-white" style="margin-bottom:1.5rem;">
+        <div class="sec-label">Record a Sale</div>
+        <div class="form-row g2">
+          <div><label>Date</label><input type="date" id="sale-date"></div>
+          <div><label>Time</label><input type="time" id="sale-time"></div>
+        </div>
+        <div style="margin-bottom:.85rem;">
+          <label>Product / Recipe</label>
+          <select id="sale-product" onchange="onSaleProductChange()"><option value="">— Select drink —</option><option value="__manual__">+ Enter manually</option></select>
+          <div class="recipe-info-pill" id="recipe-info-pill">
+            <div class="rip-item"><div class="rip-lbl">Cost/cup</div><div class="rip-val" id="rip-cost">—</div></div>
+            <div class="rip-item"><div class="rip-lbl">Menu Price</div><div class="rip-val" id="rip-price">—</div></div>
+            <div class="rip-item"><div class="rip-lbl">Margin</div><div class="rip-val" id="rip-margin">—</div></div>
+            <div class="rip-item"><div class="rip-lbl">Size</div><div class="rip-val" id="rip-size">—</div></div>
+          </div>
+        </div>
+        <div id="sale-manual-wrap" style="display:none;margin-bottom:.85rem;"><label>Drink Name</label><input type="text" id="sale-manual-name" placeholder="Enter drink name"></div>
+        <div class="form-row g2">
+          <div><label>Qty Sold</label><input type="number" id="sale-qty" value="1" min="1" oninput="calcPreview()"></div>
+          <div><label>Sell Price/cup (₱)</label><input type="number" id="sale-price" placeholder="0.00" min="0" step="0.01" oninput="calcPreview()"></div>
+        </div>
+        <div style="margin-bottom:.85rem;"><label>Cost/cup (₱) <span style="font-size:.58rem;opacity:.5;text-transform:none;letter-spacing:0">(auto)</span></label><input type="number" id="sale-cost" placeholder="0.00" min="0" step="0.01" oninput="calcPreview()"></div>
+        <div class="preview-card">
+          <div class="preview-row"><span class="preview-lbl">Revenue <span id="prev-note" style="font-size:.66rem;opacity:.5;"></span></span><span class="preview-val" id="prev-rev">₱0.00</span></div>
+          <div class="preview-row"><span class="preview-lbl">Total Cost</span><span class="preview-val" id="prev-cost">₱0.00</span></div>
+          <div class="preview-profit-row"><span class="preview-profit-lbl">Net Profit</span><span class="preview-profit-val pos" id="prev-profit">₱0.00</span></div>
+          <div class="preview-margin-row"><div class="preview-mbar-outer"><div class="preview-mbar-inner" id="prev-mbar" style="width:0%"></div></div><span class="preview-margin-pct" id="prev-mpct">0% margin</span></div>
+          <div class="preview-note-row"><span>Pricing status</span><span id="prev-be">—</span></div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="recordSale()">+ Record Sale</button>
+      </div>
+      <div class="card">
+        <div class="sec-label">Top Sellers</div>
+        <div id="top-sellers"><div class="empty" style="padding:1rem;"><span class="empty-ico" style="font-size:1.3rem;">🏆</span><p>No data yet.</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: INVENTORY
+══════════════════════════════════════ -->
+<div id="page-inventory" class="page">
+<div class="layout">
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:1.75rem;align-items:start;">
+    <div>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="sec-label">Add / Restock Ingredient</div>
+        <div class="form-row g4" style="align-items:end;">
+          <div><label>Ingredient</label><select id="inv-ing-sel"><option value="">— Select —</option></select></div>
+          <div><label>Add Stock</label><input type="number" id="inv-add-qty" placeholder="0" min="0" step="0.1"></div>
+          <div><label>Min Alert Qty</label><input type="number" id="inv-min-qty" placeholder="50" min="0" step="0.1"></div>
+          <button class="btn btn-primary" onclick="restockIng()">+ Update</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-label">Stock Levels</div>
+        <div id="inv-list"><div class="empty"><span class="empty-ico">📦</span><p>Add ingredients in Costing first.</p></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="sec-label">⚠ Low Stock Alerts</div>
+        <div id="low-stock-list"><div class="empty" style="padding:1rem;"><span class="empty-ico" style="font-size:1.3rem;">✅</span><p>All stocked up!</p></div></div>
+      </div>
+      <div class="card">
+        <div class="sec-label">Stock Summary</div>
+        <div class="sum-row"><span class="sum-lbl">Total Ingredients</span><span class="sum-val hi" id="inv-total-ings">0</span></div>
+        <div class="sum-row"><span class="sum-lbl">Low Stock Items</span><span class="sum-val" id="inv-low-count" style="color:var(--red)">0</span></div>
+        <div class="sum-row"><span class="sum-lbl">Out of Stock</span><span class="sum-val" id="inv-out-count" style="color:var(--red)">0</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: EXPENSES
+══════════════════════════════════════ -->
+<div id="page-expenses" class="page">
+<div class="layout">
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:1.75rem;align-items:start;">
+    <div>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="sec-label">Log an Expense</div>
+        <div class="form-row g2">
+          <div><label>Date</label><input type="date" id="exp-date"></div>
+          <div><label>Category</label>
+            <select id="exp-cat">
+              <option value="supplies">🧴 Supplies (cups, straws)</option>
+              <option value="ingredients">🛒 Ingredient Restock</option>
+              <option value="utilities">⚡ Utilities</option>
+              <option value="rent">🏠 Rent / Space</option>
+              <option value="equipment">🔧 Equipment</option>
+              <option value="transport">🚗 Transport / Gas</option>
+              <option value="other">📌 Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row g2">
+          <div><label>Description</label><input type="text" id="exp-desc" placeholder="e.g. Paper cups 1000pcs"></div>
+          <div><label>Amount (₱)</label><input type="number" id="exp-amount" placeholder="0.00" min="0" step="0.01"></div>
+        </div>
+        <button class="btn btn-primary" onclick="addExpense()">+ Log Expense</button>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <div class="sec-label" style="margin-bottom:0;flex:1;">Expense Log</div>
+          <button class="btn btn-outline btn-sm" onclick="exportExpenseCSV()">⬇ CSV</button>
+        </div>
+        <div id="exp-log"><div class="empty"><span class="empty-ico">💸</span><p>No expenses logged yet.</p></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="kpi-grid" style="grid-template-columns:1fr 1fr;margin-bottom:1.5rem;">
+        <div class="kpi k-cost"><div class="kpi-lbl">This Month</div><div class="kpi-val" id="exp-month-total">₱0</div><div class="kpi-sub">total expenses</div></div>
+        <div class="kpi k-rev"><div class="kpi-lbl">All Time</div><div class="kpi-val" id="exp-all-total">₱0</div><div class="kpi-sub">total expenses</div></div>
+      </div>
+      <div class="card">
+        <div class="sec-label">By Category</div>
+        <div id="exp-by-cat"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: STAFF
+══════════════════════════════════════ -->
+<div id="page-staff" class="page">
+<div class="layout">
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:1.75rem;align-items:start;">
+    <div>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="sec-label">Log a Shift</div>
+        <div class="form-row g2">
+          <div><label>Staff Name</label><input type="text" id="shift-name" placeholder="e.g. Maria"></div>
+          <div><label>Date</label><input type="date" id="shift-date"></div>
+        </div>
+        <div class="form-row g2">
+          <div><label>Time In</label><input type="time" id="shift-in"></div>
+          <div><label>Time Out</label><input type="time" id="shift-out"></div>
+        </div>
+        <div class="form-row g2" style="margin-bottom:0;">
+          <div><label>Role</label><select id="shift-role"><option>Barista</option><option>Cashier</option><option>Manager</option><option>Helper</option></select></div>
+          <div><label>Notes</label><input type="text" id="shift-notes" placeholder="Optional notes"></div>
+        </div>
+        <div style="margin-top:.85rem;"><button class="btn btn-primary" onclick="addShift()">+ Log Shift</button></div>
+      </div>
+      <div class="card">
+        <div class="sec-label">Shift Log</div>
+        <div id="shift-log"><div class="empty"><span class="empty-ico">👥</span><p>No shifts logged yet.</p></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="sec-label">Staff Summary</div>
+        <div class="sum-row"><span class="sum-lbl">Total Shifts Logged</span><span class="sum-val hi" id="staff-total-shifts">0</span></div>
+        <div class="sum-row"><span class="sum-lbl">Total Hours</span><span class="sum-val" id="staff-total-hours">0h</span></div>
+        <div class="sum-row"><span class="sum-lbl">Unique Staff</span><span class="sum-val" id="staff-unique">0</span></div>
+      </div>
+      <div class="card">
+        <div class="sec-label">Hours by Staff</div>
+        <div id="staff-hours-list"><div class="empty" style="padding:1rem;"><span class="empty-ico" style="font-size:1.3rem;">👤</span><p>No data yet.</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE: ORDERS (Customer Queue)
+══════════════════════════════════════ -->
+<div id="page-orders" class="page">
+<div class="layout">
+  <div class="order-grid">
+    <div>
+      <div class="order-stats-row">
+        <div class="order-stat"><div class="order-stat-val" id="q-waiting">0</div><div class="order-stat-lbl">Waiting</div></div>
+        <div class="order-stat"><div class="order-stat-val" id="q-done">0</div><div class="order-stat-lbl">Done</div></div>
+        <div class="order-stat"><div class="order-stat-val" id="q-total">0</div><div class="order-stat-lbl">Total Today</div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <div class="sec-label" style="margin-bottom:0;flex:1;">🧾 Order Queue</div>
+          <button class="btn btn-outline btn-sm" onclick="clearDoneOrders()">Clear Done</button>
+        </div>
+        <div id="order-queue-list" class="order-queue-list">
+          <div class="empty"><span class="empty-ico">🧾</span><p>No orders yet. Add one on the right.</p></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card card-white">
+        <div class="sec-label">New Order</div>
+        <div style="margin-bottom:.85rem;">
+          <label>Customer Name</label>
+          <input type="text" id="order-customer" placeholder="e.g. Maria or Table 3">
+        </div>
+        <div style="margin-bottom:.85rem;">
+          <label>Drink</label>
+          <select id="order-drink">
+            <option value="">— Select drink —</option>
+            <option value="__custom__">+ Custom drink</option>
+          </select>
+        </div>
+        <div id="order-custom-wrap" style="display:none;margin-bottom:.85rem;">
+          <label>Custom Drink Name</label>
+          <input type="text" id="order-custom-name" placeholder="e.g. Hot Americano">
+        </div>
+        <div style="margin-bottom:.85rem;">
+          <label>Qty</label>
+          <input type="number" id="order-qty" value="1" min="1" style="width:80px;">
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label>Notes / Customization</label>
+          <input type="text" id="order-notes" placeholder="e.g. less sugar, extra shot">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="addOrder()">+ Add to Queue</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE: REPORTS
+══════════════════════════════════════ -->
+<div id="page-reports" class="page">
+<div class="layout">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="sec-label">Daily Summary Report</div>
+      <div style="margin-bottom:1rem;"><label>Select Date</label><input type="date" id="report-date"></div>
+      <button class="btn btn-primary btn-full" onclick="generateDailyReport()" style="margin-bottom:.75rem;">📋 Generate Daily Report</button>
+      <button class="btn btn-outline btn-full" onclick="printReport()">🖨 Print Report</button>
+    </div>
+    <div class="card">
+      <div class="sec-label">Export All Data</div>
+      <p style="font-size:.84rem;color:var(--text2);margin-bottom:1rem;line-height:1.6;">Download all your ONE DAY COFFEE data as CSV files for Excel or Google Sheets.</p>
+      <div style="display:flex;flex-direction:column;gap:.6rem;">
+        <button class="btn btn-outline btn-full" onclick="exportCSV()">⬇ Sales Log CSV</button>
+        <button class="btn btn-outline btn-full" onclick="exportExpenseCSV()">⬇ Expenses CSV</button>
+        <button class="btn btn-outline btn-full" onclick="exportIngredientsCSV()">⬇ Ingredients CSV</button>
+        <button class="btn btn-danger btn-full btn-sm" onclick="confirmClearData()" style="margin-top:.5rem;">🗑 Clear All Data</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="report-output">
+    <div class="empty"><span class="empty-ico">📋</span><p>Generate a report above.</p></div>
+  </div>
+</div>
+</div>
+
+<!-- ══ PRINT MENU MODAL ══ -->
+<div class="modal-overlay" id="menu-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('menu-modal')">✕</button>
+    <div class="modal-title">Print-Ready Menu</div>
+    <div id="menu-preview" class="print-area"></div>
+    <div style="display:flex;gap:.75rem;margin-top:1.25rem;justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closeModal('menu-modal')">Close</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+let ings     = JSON.parse(localStorage.getItem('kz_ings')   || '[]');
+let recipes  = JSON.parse(localStorage.getItem('kz_recs')   || '[]');
+let sales    = JSON.parse(localStorage.getItem('kz_sales')  || '[]');
+let expenses = JSON.parse(localStorage.getItem('kz_exp')    || '[]');
+let shifts   = JSON.parse(localStorage.getItem('kz_shifts') || '[]');
+let inventory= JSON.parse(localStorage.getItem('kz_inv')    || '{}'); // {ingId: {stock, minAlert}}
+let curIngs  = [];
+let curPeriod= 'day';
+let isDark   = localStorage.getItem('kz_theme') !== 'light';
+
+const PRESETS_DEF = [
+  {label:'Espresso Shot',amt:18,unit:'g',match:'espresso'},
+  {label:'Double Shot',amt:36,unit:'g',match:'espresso'},
+  {label:'Whole Milk',amt:180,unit:'ml',match:'milk'},
+  {label:'Oat Milk',amt:180,unit:'ml',match:'oat'},
+  {label:'Syrup Pump',amt:1,unit:'pump',match:'syrup'},
+  {label:'Ice',amt:150,unit:'g',match:'ice'},
+  {label:'Heavy Cream',amt:30,unit:'ml',match:'cream'},
+];
+const QUOTES = [
+  {text:"Good coffee is a pleasure. Good margins are a necessity.",attr:"— The Barista's Ledger"},
+  {text:"Every cup is a story. Make sure the ending is profitable.",attr:"— Kozzy Wisdom"},
+  {text:"Know your cost before you pour the shot.",attr:"— Old Café Proverb"},
+  {text:"The secret ingredient is always knowing what it costs.",attr:"— Kozzy"},
+  {text:"A cozy café runs on good beans and better numbers.",attr:"— The Roaster's Handbook"},
+  {text:"Price with confidence. Cost with precision.",attr:"— Kozzy Wisdom"},
+  {text:"Your most popular drink should also be your most profitable.",attr:"— The Barista's Ledger"},
+];
+const CAT_ICON = {espresso:'☕',milk:'🥛',syrup:'🍬',cup:'🥤',other:'+'};
+const EXP_ICON = {supplies:'🧴',ingredients:'🛒',utilities:'⚡',rent:'🏠',equipment:'🔧',transport:'🚗',other:'📌'};
+
+let _qIdx=0, _qTimer=null;
+
+// ══════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════
+function persist() {
+  localStorage.setItem('kz_ings',   JSON.stringify(ings));
+  localStorage.setItem('kz_recs',   JSON.stringify(recipes));
+  localStorage.setItem('kz_sales',  JSON.stringify(sales));
+  localStorage.setItem('kz_exp',    JSON.stringify(expenses));
+  localStorage.setItem('kz_shifts', JSON.stringify(shifts));
+  localStorage.setItem('kz_inv',    JSON.stringify(inventory));
+}
+function toast(msg, type='') {
+  const el = document.getElementById('toast-el');
+  el.textContent = msg;
+  el.style.background = type==='err' ? 'var(--red)' : type==='ok' ? 'var(--green)' : 'var(--text)';
+  el.style.color = 'var(--bg)';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+function cur() { return document.getElementById('currency').value || '₱'; }
+function fmt(n) { return cur() + Number(n).toFixed(2); }
+function fmtC(n) { return cur() + Number(n).toFixed(4); }
+function fmtHours(mins) { const h=Math.floor(mins/60),m=mins%60; return h+'h'+(m?(' '+m+'m'):''); }
+
+// Theme
+function toggleTheme() {
+  isDark = !isDark;
+  applyTheme();
+  localStorage.setItem('kz_theme', isDark ? 'dark' : 'light');
+}
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('theme-btn').textContent = isDark ? '☀ Light' : '🌙 Dark';
+}
+
+// Page nav
+// showPage — full version with orders defined below
+
+// Modal
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Inner tabs
+function switchInner(name) {
+  document.querySelectorAll('.inner-tab').forEach((t,i) =>
+    t.classList.toggle('active', (i===0&&name==='ings')||(i===1&&name==='recs')));
+  document.getElementById('itab-ings').classList.toggle('active', name==='ings');
+  document.getElementById('itab-recs').classList.toggle('active', name==='recs');
+  if (name==='recs') renderRecList();
+}
+
+// Unit conversion
+function cvt(amt,from,to) {
+  if(from===to) return amt;
+  const t={g:{kg:.001,oz:.03527},kg:{g:1000},ml:{L:.001,tbsp:.0676,tsp:.2029,oz:.0338},L:{ml:1000},
+    oz:{g:28.35,ml:29.57},lb:{g:453.6,oz:16},tbsp:{ml:14.79,tsp:3},tsp:{ml:4.93},
+    cup:{ml:236.6,tbsp:16},pump:{ml:7.5}};
+  if(t[from]&&t[from][to]) return amt*t[from][to];
+  if(t[to]&&t[to][from]) return amt/t[to][from];
+  return amt;
+}
+
+// ══════════════════════════════════════════════════════
+//  COSTING
+// ══════════════════════════════════════════════════════
+function addIng() {
+  const name=document.getElementById('ing-name').value.trim();
+  const price=parseFloat(document.getElementById('ing-price').value);
+  const qty=parseFloat(document.getElementById('ing-qty').value);
+  const unit=document.getElementById('ing-unit').value;
+  const cat=document.querySelector('input[name="ing-cat"]:checked').value;
+  if(!name||isNaN(price)||isNaN(qty)||qty<=0){toast('⚠ Fill all fields','err');return;}
+  const newIng = {id:Date.now(),name,price,qty,unit,cat,cpu:price/qty};
+  ings.push(newIng);
+  // Init inventory slot
+  if(!inventory[newIng.id]) inventory[newIng.id] = {stock:0, minAlert:50};
+  persist(); renderIngs(); updateIngSel(); updatePresets(); updateSaleSel(); updateInvSel();
+  document.getElementById('ing-name').value='';
+  document.getElementById('ing-price').value='';
+  document.getElementById('ing-qty').value='';
+  toast('✓ '+name+' added','ok');
+}
+function delIng(id) {
+  ings=ings.filter(i=>i.id!==id);
+  delete inventory[id];
+  persist(); renderIngs(); updateIngSel(); updatePresets(); updateSaleSel(); updateInvSel(); renderInventory();
+  toast('Removed');
+}
+function renderIngs() {
+  const tb=document.getElementById('ing-tbody');
+  if(!ings.length){tb.innerHTML=`<tr><td colspan="5"><div class="empty"><span class="empty-ico">🫘</span><p>No ingredients yet.</p></div></td></tr>`;return;}
+  tb.innerHTML=ings.map(i=>`
+    <tr>
+      <td><strong>${i.name}</strong></td>
+      <td><span class="badge badge-w">${CAT_ICON[i.cat]||'+'} ${i.cat}</span></td>
+      <td><span class="mono hi">${fmt(i.price)}</span> / ${i.qty}<span style="font-size:.62rem;color:var(--text3);margin-left:3px">${i.unit}</span></td>
+      <td class="mono dim">${fmtC(i.cpu)}/${i.unit}</td>
+      <td><button class="btn-del" onclick="delIng(${i.id})">✕</button></td>
+    </tr>`).join('');
+}
+function updateIngSel(){
+  const s=document.getElementById('rec-ing-sel'),v=s.value;
+  s.innerHTML=`<option value="">— Choose —</option>`+ings.map(i=>`<option value="${i.id}">${i.name} (${fmtC(i.cpu)}/${i.unit})</option>`).join('');
+  s.value=v;
+}
+function updatePresets(){
+  const w=document.getElementById('presets-wrap');
+  const b=PRESETS_DEF.map(p=>{const m=ings.find(i=>i.name.toLowerCase().includes(p.match));if(!m)return'';return`<button class="preset-btn" onclick="quickAdd(${m.id},${p.amt},'${p.unit}')">${p.label}</button>`;}).filter(Boolean);
+  w.innerHTML=b.length?b.join(''):`<span style="font-family:'Courier Prime',monospace;font-size:.7rem;color:var(--text3)">Add ingredients to see presets</span>`;
+}
+function setSize(btn,label){document.querySelectorAll('.sz-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('rec-size').value=label;recalcCost();}
+function quickAdd(ingId,amt,unit){
+  const ing=ings.find(i=>i.id===ingId);if(!ing)return;
+  const c=cvt(amt,unit,ing.unit);
+  curIngs.push({ingId,name:ing.name,cat:ing.cat,amount:amt,unit,conv:c,cpu:ing.cpu,lineCost:ing.cpu*c,rowId:Date.now()+Math.random()});
+  renderCurIngs();recalcCost();toast('✓ '+ing.name,'ok');
+}
+function addRecIng(){
+  const ingId=parseInt(document.getElementById('rec-ing-sel').value);
+  const amount=parseFloat(document.getElementById('rec-ing-amt').value);
+  const unit=document.getElementById('rec-ing-unit').value;
+  if(!ingId||isNaN(amount)||amount<=0){toast('⚠ Select ingredient & amount','err');return;}
+  const ing=ings.find(i=>i.id===ingId);if(!ing)return;
+  const c=cvt(amount,unit,ing.unit);
+  curIngs.push({ingId,name:ing.name,cat:ing.cat,amount,unit,conv:c,cpu:ing.cpu,lineCost:ing.cpu*c,rowId:Date.now()+Math.random()});
+  renderCurIngs();recalcCost();toast('✓ Added '+ing.name,'ok');
+}
+function removeRecIng(rowId){curIngs=curIngs.filter(r=>r.rowId!==rowId);renderCurIngs();recalcCost();}
+function renderCurIngs(){
+  const tb=document.getElementById('rec-ing-tbody');
+  if(!curIngs.length){tb.innerHTML=`<tr><td colspan="4"><div class="empty"><span class="empty-ico">🫗</span><p>Add ingredients above.</p></div></td></tr>`;return;}
+  tb.innerHTML=curIngs.map(r=>`<tr><td><strong>${r.name}</strong></td><td>${r.amount}<span style="font-size:.62rem;color:var(--text3);margin-left:3px">${r.unit}</span></td><td class="mono hi">${fmt(r.lineCost)}</td><td><button class="btn-del" onclick="removeRecIng(${r.rowId})">✕</button></td></tr>`).join('');
+}
+function recalcCost(){
+  const total=curIngs.reduce((s,r)=>s+r.lineCost,0);
+  const yld=Math.max(1,parseFloat(document.getElementById('rec-yield').value)||1);
+  const ovhd=(parseFloat(document.getElementById('overhead').value)||0)/100;
+  const mrkp=(parseFloat(document.getElementById('markup').value)||0)/100;
+  const perCup=(total*(1+ovhd))/yld,sell=perCup*(1+mrkp),profit=sell-perCup;
+  const margin=sell>0?(profit/sell*100):0;
+  document.getElementById('s-name').textContent=document.getElementById('rec-name').value||'—';
+  document.getElementById('s-size').textContent=document.getElementById('rec-size').value;
+  document.getElementById('s-total').textContent=fmt(total);
+  document.getElementById('s-yield').textContent=yld+' cup'+(yld>1?'s':'');
+  document.getElementById('s-per').textContent=fmt(perCup);
+  document.getElementById('s-sell').textContent=fmt(sell);
+  document.getElementById('s-profit').textContent=fmt(profit);
+  document.getElementById('s-margin-pct').textContent=margin.toFixed(1)+'%';
+  document.getElementById('s-mbar').style.width=Math.min(100,margin)+'%';
+  document.getElementById('s-profit-row').className='sum-row '+(profit>=0?'profit':'loss');
+}
+// saveRecipe defined below with photo support
+// clearRecipe defined below with photo clear support
+// renderRecList defined below with photo+actions support
+function loadRecipe(id){
+  const r=recipes.find(x=>x.id===id);if(!r)return;
+  document.getElementById('rec-name').value=r.name;
+  document.getElementById('rec-yield').value=r.yld;
+  document.getElementById('overhead').value=r.overhead||15;
+  document.getElementById('markup').value=r.markup||200;
+  document.getElementById('rec-notes').value=r.notes||'';
+  document.querySelectorAll('.sz-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().startsWith(r.size)));
+  document.getElementById('rec-size').value=r.size;
+  curIngs=r.ings.map(i=>({...i,rowId:Date.now()+Math.random()}));
+  renderCurIngs();recalcCost();switchInner('ings');toast('✓ Loaded "'+r.name+'"','ok');
+}
+function exportRecipe(){
+  const name=document.getElementById('rec-name').value||'Untitled';
+  if(!curIngs.length){toast('⚠ No ingredients','err');return;}
+  const c=cur(),total=curIngs.reduce((s,r)=>s+r.lineCost,0);
+  const yld=parseInt(document.getElementById('rec-yield').value)||1;
+  const ovhd=(parseFloat(document.getElementById('overhead').value)||0)/100;
+  const mrkp=(parseFloat(document.getElementById('markup').value)||0)/100;
+  const perCup=(total*(1+ovhd))/yld,sell=perCup*(1+mrkp);
+  let t=`ONE DAY COFFEE — RECIPE COST CARD\n${'═'.repeat(40)}\nDrink: ${name}\nSize:  ${document.getElementById('rec-size').value}\nDate:  ${new Date().toLocaleDateString()}\n\nINGREDIENTS\n${'-'.repeat(40)}\n`;
+  curIngs.forEach(r=>{t+=`  ${r.name.padEnd(22)} ${String(r.amount+' '+r.unit).padEnd(10)} ${c}${r.lineCost.toFixed(4)}\n`;});
+  t+=`\nCOST BREAKDOWN\n${'-'.repeat(40)}\n  Ingredient Cost: ${c}${total.toFixed(2)}\n  Overhead (${Math.round(ovhd*100)}%):  ${c}${(total*ovhd).toFixed(2)}\n  Cost per Cup:    ${c}${perCup.toFixed(2)}\n  Menu Price:      ${c}${sell.toFixed(2)}\n  Profit/Cup:      ${c}${(sell-perCup).toFixed(2)}\n  Margin:          ${sell>0?((sell-perCup)/sell*100).toFixed(1):0}%\n`;
+  const notes=document.getElementById('rec-notes').value;if(notes)t+=`\nNOTES\n${notes}\n`;
+  t+=`\n— ONE DAY COFFEE\n`;
+  const blob=new Blob([t],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name.replace(/\s+/g,'_')+'_recipe.txt';a.click();toast('✓ Exported!','ok');
+}
+
+// ── PRINT MENU MODAL ──
+function openMenuModal(){
+  const preview=document.getElementById('menu-preview');
+  if(!recipes.length){toast('⚠ No saved recipes to show','err');return;}
+  const c=cur();
+  preview.innerHTML=`
+    <div style="font-family:'Playfair Display',serif;max-width:480px;margin:0 auto;padding:1.5rem 2rem;border:2px solid #111;border-radius:8px;background:#fff;color:#111;">
+      <div style="text-align:center;margin-bottom:1.5rem;border-bottom:1px solid #ccc;padding-bottom:1rem;">
+        <div style="font-size:2.2rem;font-weight:900;letter-spacing:.1em;">ONE DAY COFFEE</div>
+        <div style="font-family:'Courier Prime',monospace;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:#888;margin-top:.25rem;">☕ Coffee Bar</div>
+      </div>
+      ${recipes.map(r=>`
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.85rem;padding-bottom:.85rem;border-bottom:1px dashed #e0e0e0;">
+          <div>
+            <div style="font-size:1.05rem;font-weight:700;">${r.name}</div>
+            <div style="font-family:'Courier Prime',monospace;font-size:.65rem;color:#888;margin-top:2px;letter-spacing:.05em;">${r.size} · ${r.notes?r.notes.slice(0,40)+'…':''}</div>
+          </div>
+          <div style="font-size:1.3rem;font-weight:700;margin-left:1rem;">${c}${r.sell.toFixed(2)}</div>
+        </div>`).join('')}
+      <div style="text-align:center;font-family:'Courier Prime',monospace;font-size:.6rem;color:#bbb;margin-top:1rem;letter-spacing:.12em;text-transform:uppercase;">Thank you for choosing ONE DAY COFFEE ☕</div>
+    </div>`;
+  openModal('menu-modal');
+}
+
+// ══════════════════════════════════════════════════════
+//  SALES
+// ══════════════════════════════════════════════════════
+function initSaleForm(){
+  const n=new Date();
+  document.getElementById('sale-date').value=n.toISOString().split('T')[0];
+  document.getElementById('sale-time').value=n.toTimeString().slice(0,5);
+}
+function updateSaleSel(){
+  const sel=document.getElementById('sale-product'),v=sel.value;
+  sel.innerHTML=`<option value="">— Select drink —</option>`+
+    recipes.map(r=>`<option value="${r.id}" data-cost="${r.perCup}" data-price="${r.sell}" data-size="${r.size}">${r.name} (${r.size})</option>`).join('')+
+    `<option value="__manual__">+ Enter manually</option>`;
+  sel.value=v;
+}
+function onSaleProductChange(){
+  const sel=document.getElementById('sale-product'),opt=sel.options[sel.selectedIndex];
+  const isMan=sel.value==='__manual__',hasRec=sel.value&&!isMan;
+  document.getElementById('sale-manual-wrap').style.display=isMan?'block':'none';
+  if(hasRec){
+    const cost=parseFloat(opt.dataset.cost||0),price=parseFloat(opt.dataset.price||0),size=opt.dataset.size||'—';
+    const margin=price>0?((price-cost)/price*100):0;
+    document.getElementById('sale-cost').value=cost.toFixed(2);
+    document.getElementById('sale-price').value=price.toFixed(2);
+    const pill=document.getElementById('recipe-info-pill');
+    if(pill){document.getElementById('rip-cost').textContent=fmt(cost);document.getElementById('rip-price').textContent=fmt(price);document.getElementById('rip-margin').textContent=margin.toFixed(1)+'%';document.getElementById('rip-size').textContent=size;pill.classList.add('visible');}
+  } else {
+    const pill=document.getElementById('recipe-info-pill');
+    if(pill) pill.classList.remove('visible');
+    if(isMan){document.getElementById('sale-cost').value='';document.getElementById('sale-price').value='';}
+  }
+  calcPreview();
+}
+function calcPreview(){
+  const qty=parseFloat(document.getElementById('sale-qty').value)||0;
+  const price=parseFloat(document.getElementById('sale-price').value)||0;
+  const cost=parseFloat(document.getElementById('sale-cost').value)||0;
+  const rev=qty*price,tc=qty*cost,profit=rev-tc,margin=rev>0?(profit/rev*100):0,c=cur();
+  document.getElementById('prev-note').textContent=qty>1?`(${qty}×${c}${price.toFixed(2)})`:'';
+  document.getElementById('prev-rev').textContent=c+rev.toFixed(2);
+  document.getElementById('prev-cost').textContent=c+tc.toFixed(2);
+  const pEl=document.getElementById('prev-profit');
+  pEl.textContent=(profit<0?'-':'')+c+Math.abs(profit).toFixed(2);
+  pEl.className='preview-profit-val '+(profit>=0?'pos':'neg');
+  pEl.classList.add('bump');setTimeout(()=>pEl.classList.remove('bump'),180);
+  const bar=document.getElementById('prev-mbar');
+  bar.style.width=Math.max(0,Math.min(100,margin))+'%';
+  bar.style.background=margin>=50?'var(--green)':margin>=25?'var(--yellow)':'var(--red)';
+  document.getElementById('prev-mpct').textContent=margin.toFixed(1)+'% margin';
+  const pp=price-cost;
+  document.getElementById('prev-be').textContent=pp>0?'✓ Profitable per cup':pp===0?'Break-even':'✗ Selling at a loss';
+}
+function recordSale(){
+  const date=document.getElementById('sale-date').value;
+  const time=document.getElementById('sale-time').value;
+  const prodId=document.getElementById('sale-product').value;
+  const qty=parseFloat(document.getElementById('sale-qty').value)||0;
+  const price=parseFloat(document.getElementById('sale-price').value)||0;
+  const cost=parseFloat(document.getElementById('sale-cost').value)||0;
+  let pName='';
+  if(prodId==='__manual__'){pName=document.getElementById('sale-manual-name').value.trim();if(!pName){toast('⚠ Enter drink name','err');return;}}
+  else if(prodId){const r=recipes.find(r=>r.id===parseInt(prodId));pName=r?r.name:'Unknown';}
+  else{toast('⚠ Select a product','err');return;}
+  if(!date||qty<=0||price<=0){toast('⚠ Fill all fields','err');return;}
+  // Deduct inventory
+  if(prodId&&prodId!=='__manual__'){
+    const rec=recipes.find(r=>r.id===parseInt(prodId));
+    if(rec) rec.ings.forEach(ri=>{
+      const iv=inventory[ri.ingId];
+      if(iv) iv.stock=Math.max(0,(iv.stock||0)-(ri.conv*qty));
+    });
+    persist();
+  }
+  sales.push({id:Date.now(),date,time,productName:pName,qty,price,cost,revenue:qty*price,totalCost:qty*cost,profit:qty*(price-cost)});
+  persist();updateSalesPage();checkStockAlerts();
+  document.getElementById('sale-qty').value='1';calcPreview();
+  toast('✓ '+pName+' recorded','ok');
+}
+
+// ── PERIOD / FILTER ──
+function filterSales(period){
+  const now=new Date();
+  return sales.filter(s=>{
+    const d=new Date(s.date);
+    if(period==='day') return d.toDateString()===now.toDateString();
+    if(period==='week'){const ago=new Date(now);ago.setDate(now.getDate()-6);return d>=ago;}
+    if(period==='month') return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    return true;
+  });
+}
+function setPeriod(p,btn){
+  curPeriod=p;
+  document.querySelectorAll('.period-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const at=document.getElementById('alltime-panel');
+  if(at) at.classList.toggle('visible',p==='all');
+  updateSalesPage();
+}
+// updateSalesPage defined below with analytics support
+
+// ── GOAL TRACKER ──
+function updateGoal(){
+  const target=parseFloat(document.getElementById('goal-amount').value)||0;
+  const todaySales=filterSales('day');
+  const earned=todaySales.reduce((s,x)=>s+x.revenue,0);
+  const pct=target>0?Math.min(100,(earned/target*100)):0;
+  const remaining=Math.max(0,target-earned);
+  const c=cur();
+  document.getElementById('goal-pct').textContent=pct.toFixed(0)+'%';
+  document.getElementById('goal-bar').style.width=pct+'%';
+  document.getElementById('goal-bar').style.background=pct>=100?'var(--green)':pct>=60?'var(--yellow)':'var(--text)';
+  document.getElementById('goal-earned').textContent=c+earned.toFixed(2)+' earned today';
+  document.getElementById('goal-remaining').textContent=target>0?(pct>=100?'🎉 Goal reached!':(c+remaining.toFixed(2)+' to go')):'Set a target above';
+}
+
+// ── ALL-TIME ──
+function renderAllTime(){
+  const c=cur();
+  const totRev=sales.reduce((s,x)=>s+x.revenue,0),totProfit=sales.reduce((s,x)=>s+x.profit,0),totCups=sales.reduce((s,x)=>s+x.qty,0);
+  const margin=totRev>0?(totProfit/totRev*100):0;
+  document.getElementById('at-rev').textContent=c+totRev.toFixed(0);
+  document.getElementById('at-profit').textContent=(totProfit<0?'-':'')+c+Math.abs(totProfit).toFixed(0);
+  document.getElementById('at-cups').textContent=totCups;
+  document.getElementById('at-margin').textContent=margin.toFixed(1)+'%';
+  const dm={};sales.forEach(s=>{if(!dm[s.date])dm[s.date]={rev:0};dm[s.date].rev+=s.revenue;});
+  const best=Object.entries(dm).sort((a,b)=>b[1].rev-a[1].rev)[0];
+  if(best){const d=new Date(best[0]);document.getElementById('at-bestday').textContent=d.toLocaleDateString('en-PH',{weekday:'long',month:'long',day:'numeric',year:'numeric'});document.getElementById('at-bestday-rev').textContent=c+best[1].rev.toFixed(2);}
+  else{document.getElementById('at-bestday').textContent='No sales yet';document.getElementById('at-bestday-rev').textContent='—';}
+  const uDays=Object.keys(dm).length;
+  document.getElementById('at-avg-rev').textContent=uDays>0?c+(totRev/uDays).toFixed(2):'—';
+}
+
+// ── CHART ──
+function renderChart(f){
+  const wrap=document.getElementById('bars-wrap');
+  if(!f.length){wrap.innerHTML=`<div class="empty" style="width:100%"><span class="empty-ico">📊</span><p>No data.</p></div>`;document.getElementById('chart-badge').textContent='';return;}
+  const g={};f.forEach(s=>{if(!g[s.date])g[s.date]={revenue:0,cost:0};g[s.date].revenue+=s.revenue;g[s.date].cost+=s.totalCost;});
+  const entries=Object.entries(g).sort((a,b)=>a[0].localeCompare(b[0])).slice(-14);
+  const maxRev=Math.max(...entries.map(e=>e[1].revenue),1),c=cur();
+  const titles={day:'Today',week:'This Week',month:'This Month',all:'All-Time'};
+  document.getElementById('chart-title').textContent=titles[curPeriod]+' — Revenue vs Cost';
+  const totRev=f.reduce((s,x)=>s+x.revenue,0),totPr=f.reduce((s,x)=>s+x.profit,0);
+  document.getElementById('chart-badge').innerHTML=`<div>Total ${c}${totRev.toFixed(0)}</div><div style="color:${totPr>=0?'var(--green)':'var(--red)'}">${totPr>=0?'+':''}${c}${totPr.toFixed(0)}</div>`;
+  wrap.innerHTML=entries.map(([date,v])=>{
+    const rH=Math.round((v.revenue/maxRev)*120),cH=Math.round((v.cost/maxRev)*120);
+    const lbl=new Date(date).toLocaleDateString('en-PH',{month:'short',day:'numeric'});
+    return `<div class="bar-col" title="${lbl}: Rev ${c}${v.revenue.toFixed(2)} / Cost ${c}${v.cost.toFixed(2)}"><div style="display:flex;gap:2px;align-items:flex-end;width:100%;"><div class="bar bar-rev" style="height:${rH}px;flex:1;"></div><div class="bar bar-cost" style="height:${cH}px;flex:1;"></div></div><div class="bar-lbl">${lbl}</div></div>`;
+  }).join('');
+}
+
+// ── SALES LOG WITH SEARCH ──
+function renderSalesLog(f){
+  const wrap=document.getElementById('sales-log-wrap');
+  const searchTerm=(document.getElementById('sales-search')?.value||'').toLowerCase();
+  let filtered=searchTerm?f.filter(s=>s.productName.toLowerCase().includes(searchTerm)):f;
+  if(!filtered.length){wrap.innerHTML=`<div class="empty"><span class="empty-ico">📋</span><p>${searchTerm?'No results for "'+searchTerm+'"':'No sales in this period.'}</p></div>`;return;}
+  const g={};
+  [...filtered].sort((a,b)=>b.date.localeCompare(a.date)||(b.time||'').localeCompare(a.time||'')).forEach(s=>{if(!g[s.date])g[s.date]=[];g[s.date].push(s);});
+  const c=cur();
+  let html=`<table class="tbl"><thead><tr><th>Time</th><th>Product</th><th>Qty</th><th>Revenue</th><th>Cost</th><th>Profit</th><th></th></tr></thead><tbody>`;
+  Object.entries(g).forEach(([date,items])=>{
+    const dLbl=new Date(date).toLocaleDateString('en-PH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    const dayRev=items.reduce((s,i)=>s+i.revenue,0),dayPro=items.reduce((s,i)=>s+i.profit,0);
+    html+=`<tr><td colspan="7"><div class="sale-date-group"><span>${dLbl}</span><span class="sale-date-subtotal">${c}${dayRev.toFixed(2)} · <span style="color:${dayPro>=0?'var(--green)':'var(--red)'}">${dayPro>=0?'+':''}${c}${dayPro.toFixed(2)}</span></span></div></td></tr>`;
+    items.forEach(s=>{html+=`<tr><td class="dim">${s.time||'—'}</td><td><strong>${s.productName}</strong></td><td class="mono">${s.qty}</td><td class="mono hi">${c}${s.revenue.toFixed(2)}</td><td class="mono dim">${c}${s.totalCost.toFixed(2)}</td><td class="mono ${s.profit>=0?'green':'red'}">${s.profit>=0?'+':''}${c}${s.profit.toFixed(2)}</td><td><button class="btn-del" onclick="deleteSale(${s.id})">✕</button></td></tr>`;});
+  });
+  html+=`</tbody></table>`;wrap.innerHTML=html;
+}
+function deleteSale(id){sales=sales.filter(s=>s.id!==id);persist();updateSalesPage();toast('Sale removed');}
+
+// ── TOP SELLERS ──
+function renderTopSellers(f){
+  const el=document.getElementById('top-sellers');
+  if(!f.length){el.innerHTML=`<div class="empty" style="padding:1rem"><span class="empty-ico" style="font-size:1.3rem">🏆</span><p>No data yet.</p></div>`;return;}
+  const t={};f.forEach(s=>{if(!t[s.productName])t[s.productName]={cups:0,revenue:0,profit:0};t[s.productName].cups+=s.qty;t[s.productName].revenue+=s.revenue;t[s.productName].profit+=s.profit;});
+  const sorted=Object.entries(t).sort((a,b)=>b[1].cups-a[1].cups).slice(0,5),max=sorted[0][1].cups,c=cur();
+  el.innerHTML=sorted.map(([name,v],i)=>`<div class="seller-row"><div class="seller-top"><span class="seller-name">${['🥇','🥈','🥉','4.','5.'][i]} ${name}</span><span class="seller-cups">${v.cups} cups</span></div><div class="seller-bar-outer"><div class="seller-bar-fill" style="width:${(v.cups/max*100).toFixed(0)}%"></div></div><div class="seller-bottom"><span class="dim">Rev: ${c}${v.revenue.toFixed(2)}</span><span class="mono ${v.profit>=0?'green':'red'}" style="font-size:.7rem">${v.profit>=0?'+':''}${c}${v.profit.toFixed(2)}</span></div></div>`).join('');
+}
+
+// ── CSV EXPORT ──
+function exportCSV(){
+  if(!sales.length){toast('⚠ No sales to export','err');return;}
+  const c=cur();
+  let csv='Date,Time,Product,Qty,Sell Price,Cost,Revenue,Total Cost,Profit\n';
+  sales.forEach(s=>{csv+=`${s.date},${s.time||''},${s.productName},${s.qty},${s.price},${s.cost},${s.revenue.toFixed(2)},${s.totalCost.toFixed(2)},${s.profit.toFixed(2)}\n`;});
+  dl(csv,'kozzy_sales.csv','text/csv');toast('✓ Sales CSV exported','ok');
+}
+function exportExpenseCSV(){
+  if(!expenses.length){toast('⚠ No expenses to export','err');return;}
+  let csv='Date,Category,Description,Amount\n';
+  expenses.forEach(e=>{csv+=`${e.date},${e.cat},"${e.desc}",${e.amount.toFixed(2)}\n`;});
+  dl(csv,'kozzy_expenses.csv','text/csv');toast('✓ Expenses CSV exported','ok');
+}
+function exportIngredientsCSV(){
+  if(!ings.length){toast('⚠ No ingredients','err');return;}
+  let csv='Name,Category,Package Price,Quantity,Unit,Cost Per Unit\n';
+  ings.forEach(i=>{csv+=`${i.name},${i.cat},${i.price},${i.qty},${i.unit},${i.cpu.toFixed(4)}\n`;});
+  dl(csv,'kozzy_ingredients.csv','text/csv');toast('✓ Ingredients CSV exported','ok');
+}
+function dl(content,filename,type){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();}
+
+// ══════════════════════════════════════════════════════
+//  INVENTORY
+// ══════════════════════════════════════════════════════
+function updateInvSel(){
+  const s=document.getElementById('inv-ing-sel'),v=s.value;
+  s.innerHTML=`<option value="">— Select —</option>`+ings.map(i=>`<option value="${i.id}">${i.name}</option>`).join('');
+  s.value=v;
+}
+function restockIng(){
+  const id=parseInt(document.getElementById('inv-ing-sel').value);
+  const add=parseFloat(document.getElementById('inv-add-qty').value)||0;
+  const min=parseFloat(document.getElementById('inv-min-qty').value)||50;
+  if(!id){toast('⚠ Select an ingredient','err');return;}
+  if(!inventory[id]) inventory[id]={stock:0,minAlert:min};
+  inventory[id].stock=(inventory[id].stock||0)+add;
+  inventory[id].minAlert=min;
+  persist();renderInventory();checkStockAlerts();
+  document.getElementById('inv-add-qty').value='';
+  toast('✓ Stock updated','ok');
+}
+function renderInventory(){
+  const el=document.getElementById('inv-list');
+  if(!ings.length){el.innerHTML=`<div class="empty"><span class="empty-ico">📦</span><p>Add ingredients in Costing first.</p></div>`;return;}
+  let lowCount=0,outCount=0;
+  el.innerHTML=ings.map(i=>{
+    const iv=inventory[i.id]||{stock:0,minAlert:50};
+    const stock=iv.stock||0,minA=iv.minAlert||50;
+    const pct=minA>0?Math.min(100,(stock/minA)*100):100;
+    const isLow=stock<minA&&stock>0,isOut=stock<=0;
+    if(isLow) lowCount++;if(isOut) outCount++;
+    const barColor=isOut?'var(--red)':isLow?'var(--yellow)':'var(--green)';
+    const status=isOut?'<span class="badge badge-r">Out of Stock</span>':isLow?'<span class="badge badge-y">Low Stock</span>':'<span class="badge badge-g">In Stock</span>';
+    return `<div class="inv-item ${isLow?'low':''} ${isOut?'critical':''}">
+      <div class="inv-header">
+        <div><div class="inv-name">${i.name}</div><div class="inv-cat">${CAT_ICON[i.cat]||'+'} ${i.cat} · Min: ${minA} ${i.unit}</div></div>
+        <div style="display:flex;align-items:center;gap:.5rem;">${status}<span class="mono" style="font-size:.82rem">${stock.toFixed(1)} ${i.unit}</span></div>
+      </div>
+      <div class="inv-bar-row">
+        <div class="inv-bar-outer"><div class="inv-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+        <span class="inv-qty-label">${pct.toFixed(0)}% of min</span>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('inv-total-ings').textContent=ings.length;
+  document.getElementById('inv-low-count').textContent=lowCount;
+  document.getElementById('inv-out-count').textContent=outCount;
+  renderLowStockAlerts();
+}
+function renderLowStockAlerts(){
+  const el=document.getElementById('low-stock-list');
+  const lowItems=ings.filter(i=>{const iv=inventory[i.id]||{stock:0,minAlert:50};return(iv.stock||0)<(iv.minAlert||50);});
+  if(!lowItems.length){el.innerHTML=`<div class="empty" style="padding:1rem"><span class="empty-ico" style="font-size:1.3rem">✅</span><p>All stocked up!</p></div>`;return;}
+  el.innerHTML=lowItems.map(i=>{
+    const iv=inventory[i.id]||{stock:0,minAlert:50};
+    const isOut=(iv.stock||0)<=0;
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:.84rem;font-weight:500;">${i.name}</div><div class="dim">${(iv.stock||0).toFixed(1)} / ${iv.minAlert||50} ${i.unit}</div></div>
+      <span class="badge ${isOut?'badge-r':'badge-y'}">${isOut?'OUT':'LOW'}</span>
+    </div>`;
+  }).join('');
+}
+function checkStockAlerts(){
+  const badge=document.getElementById('stock-alert-badge');
+  const lowCount=ings.filter(i=>{const iv=inventory[i.id]||{stock:0,minAlert:50};return(iv.stock||0)<(iv.minAlert||50);}).length;
+  badge.style.display=lowCount>0?'inline':'none';
+  badge.textContent='⚠ '+lowCount+' Low Stock';
+}
+
+// ══════════════════════════════════════════════════════
+//  EXPENSES
+// ══════════════════════════════════════════════════════
+function initExpForm(){document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];}
+function addExpense(){
+  const date=document.getElementById('exp-date').value;
+  const cat=document.getElementById('exp-cat').value;
+  const desc=document.getElementById('exp-desc').value.trim();
+  const amount=parseFloat(document.getElementById('exp-amount').value)||0;
+  if(!date||!desc||amount<=0){toast('⚠ Fill all fields','err');return;}
+  expenses.push({id:Date.now(),date,cat,desc,amount});
+  persist();renderExpenses();
+  document.getElementById('exp-desc').value='';document.getElementById('exp-amount').value='';
+  toast('✓ Expense logged','ok');
+}
+function renderExpenses(){
+  const el=document.getElementById('exp-log');
+  if(!expenses.length){el.innerHTML=`<div class="empty"><span class="empty-ico">💸</span><p>No expenses logged yet.</p></div>`;return;}
+  const c=cur();
+  const sorted=[...expenses].sort((a,b)=>b.date.localeCompare(a.date));
+  el.innerHTML=`<table class="tbl"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr></thead><tbody>`+
+    sorted.map(e=>`<tr><td class="dim">${e.date}</td><td><span class="exp-cat-badge">${EXP_ICON[e.cat]||'📌'} ${e.cat}</span></td><td>${e.desc}</td><td class="mono red">−${c}${e.amount.toFixed(2)}</td><td><button class="btn-del" onclick="delExpense(${e.id})">✕</button></td></tr>`).join('')+
+    `</tbody></table>`;
+  // Totals
+  const now=new Date();
+  const monthExp=expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  document.getElementById('exp-month-total').textContent=c+monthExp.reduce((s,e)=>s+e.amount,0).toFixed(0);
+  document.getElementById('exp-all-total').textContent=c+expenses.reduce((s,e)=>s+e.amount,0).toFixed(0);
+  // By category
+  const byCat={};expenses.forEach(e=>{if(!byCat[e.cat])byCat[e.cat]=0;byCat[e.cat]+=e.amount;});
+  const catEl=document.getElementById('exp-by-cat');
+  const sortedCats=Object.entries(byCat).sort((a,b)=>b[1]-a[1]);
+  const maxAmt=sortedCats.length?sortedCats[0][1]:1;
+  catEl.innerHTML=sortedCats.map(([cat,amt])=>`
+    <div style="margin-bottom:.75rem;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:.25rem;">
+        <span style="font-size:.82rem">${EXP_ICON[cat]||'📌'} ${cat}</span>
+        <span class="mono" style="font-size:.78rem">${c}${amt.toFixed(2)}</span>
+      </div>
+      <div style="background:var(--surface2);border-radius:100px;height:4px;overflow:hidden;"><div style="width:${(amt/maxAmt*100).toFixed(0)}%;height:100%;border-radius:100px;background:var(--text);opacity:.6;transition:width .5s;"></div></div>
+    </div>`).join('') || '<div class="empty" style="padding:1rem"><p>No expenses yet.</p></div>';
+}
+function delExpense(id){expenses=expenses.filter(e=>e.id!==id);persist();renderExpenses();toast('Expense removed');}
+
+// ══════════════════════════════════════════════════════
+//  STAFF
+// ══════════════════════════════════════════════════════
+function initShiftForm(){
+  const n=new Date();
+  document.getElementById('shift-date').value=n.toISOString().split('T')[0];
+  document.getElementById('shift-in').value='08:00';
+  document.getElementById('shift-out').value='17:00';
+}
+function addShift(){
+  const name=document.getElementById('shift-name').value.trim();
+  const date=document.getElementById('shift-date').value;
+  const timeIn=document.getElementById('shift-in').value;
+  const timeOut=document.getElementById('shift-out').value;
+  const role=document.getElementById('shift-role').value;
+  const notes=document.getElementById('shift-notes').value.trim();
+  if(!name||!date||!timeIn||!timeOut){toast('⚠ Fill all fields','err');return;}
+  const [ih,im]=timeIn.split(':').map(Number);
+  const [oh,om]=timeOut.split(':').map(Number);
+  const mins=Math.max(0,(oh*60+om)-(ih*60+im));
+  shifts.push({id:Date.now(),name,date,timeIn,timeOut,role,notes,mins});
+  persist();renderStaff();toast('✓ Shift logged for '+name,'ok');
+  document.getElementById('shift-notes').value='';
+}
+function delShift(id){shifts=shifts.filter(s=>s.id!==id);persist();renderStaff();toast('Shift removed');}
+function renderStaff(){
+  const el=document.getElementById('shift-log');
+  if(!shifts.length){el.innerHTML=`<div class="empty"><span class="empty-ico">👥</span><p>No shifts logged yet.</p></div>`;return;}
+  const sorted=[...shifts].sort((a,b)=>b.date.localeCompare(a.date));
+  el.innerHTML=sorted.map(s=>`
+    <div class="shift-card">
+      <div>
+        <div class="shift-name">${s.name} <span class="badge badge-w">${s.role}</span></div>
+        <div class="shift-meta">${s.date} · ${s.timeIn}–${s.timeOut}${s.notes?' · '+s.notes:''}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;">
+        <span class="shift-hours">${fmtHours(s.mins)}</span>
+        <button class="btn-del" onclick="delShift(${s.id})">✕</button>
+      </div>
+    </div>`).join('');
+  // Summary
+  const totalMins=shifts.reduce((s,x)=>s+x.mins,0);
+  const uniqueStaff=[...new Set(shifts.map(s=>s.name))];
+  document.getElementById('staff-total-shifts').textContent=shifts.length;
+  document.getElementById('staff-total-hours').textContent=fmtHours(totalMins);
+  document.getElementById('staff-unique').textContent=uniqueStaff.length;
+  // Hours by staff
+  const byStaff={};shifts.forEach(s=>{if(!byStaff[s.name])byStaff[s.name]=0;byStaff[s.name]+=s.mins;});
+  const staffEl=document.getElementById('staff-hours-list');
+  const sorted2=Object.entries(byStaff).sort((a,b)=>b[1]-a[1]);
+  const maxM=sorted2.length?sorted2[0][1]:1;
+  staffEl.innerHTML=sorted2.map(([name,mins])=>`
+    <div style="margin-bottom:.75rem;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:.22rem;">
+        <span style="font-size:.84rem;font-weight:500;">👤 ${name}</span>
+        <span class="mono" style="font-size:.78rem">${fmtHours(mins)}</span>
+      </div>
+      <div style="background:var(--surface2);border-radius:100px;height:4px;overflow:hidden;"><div style="width:${(mins/maxM*100).toFixed(0)}%;height:100%;border-radius:100px;background:var(--text);opacity:.6;transition:width .5s;"></div></div>
+    </div>`).join('') || '<div class="empty" style="padding:1rem"><p>No data.</p></div>';
+}
+
+// ══════════════════════════════════════════════════════
+//  REPORTS
+// ══════════════════════════════════════════════════════
+function generateDailyReport(){
+  const date=document.getElementById('report-date').value;
+  if(!date){toast('⚠ Pick a date','err');return;}
+  const daySales=sales.filter(s=>s.date===date);
+  const dayExp=expenses.filter(e=>e.date===date);
+  const dayShifts=shifts.filter(s=>s.date===date);
+  const c=cur();
+  const rev=daySales.reduce((s,x)=>s+x.revenue,0);
+  const cost=daySales.reduce((s,x)=>s+x.totalCost,0);
+  const salProfit=daySales.reduce((s,x)=>s+x.profit,0);
+  const expTotal=dayExp.reduce((s,x)=>s+x.amount,0);
+  const netProfit=salProfit-expTotal;
+  const cups=daySales.reduce((s,x)=>s+x.qty,0);
+  const tally={};daySales.forEach(s=>{if(!tally[s.productName])tally[s.productName]=0;tally[s.productName]+=s.qty;});
+  const topDrink=Object.entries(tally).sort((a,b)=>b[1]-a[1])[0];
+  const shiftMins=dayShifts.reduce((s,x)=>s+x.mins,0);
+  const reportDate=new Date(date).toLocaleDateString('en-PH',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('report-output').innerHTML=`
+    <div style="max-width:560px;">
+      <div class="sec-label">Daily Report — ${reportDate}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-bottom:1.5rem;">
+        <div style="background:var(--surface2);border-radius:9px;padding:.85rem;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;">${c}${rev.toFixed(2)}</div>
+          <div style="font-family:'Courier Prime',monospace;font-size:.58rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:.15rem;">Revenue</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:9px;padding:.85rem;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:${netProfit>=0?'var(--green)':'var(--red)'};">${netProfit>=0?'':'-'}${c}${Math.abs(netProfit).toFixed(2)}</div>
+          <div style="font-family:'Courier Prime',monospace;font-size:.58rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:.15rem;">Net Profit</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:9px;padding:.85rem;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;">${cups}</div>
+          <div style="font-family:'Courier Prime',monospace;font-size:.58rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:.15rem;">Cups Sold</div>
+        </div>
+      </div>
+      ${daySales.length?`
+      <div class="sec-label">Sales Breakdown</div>
+      <table class="tbl" style="margin-bottom:1.25rem;">
+        <thead><tr><th>Product</th><th>Qty</th><th>Revenue</th><th>Profit</th></tr></thead>
+        <tbody>${daySales.map(s=>`<tr><td>${s.productName}</td><td class="mono">${s.qty}</td><td class="mono hi">${c}${s.revenue.toFixed(2)}</td><td class="mono ${s.profit>=0?'green':'red'}">${s.profit>=0?'+':''}${c}${s.profit.toFixed(2)}</td></tr>`).join('')}</tbody>
+      </table>`:'<div class="empty" style="padding:1rem"><p>No sales on this date.</p></div>'}
+      ${dayExp.length?`
+      <div class="sec-label">Expenses (${c}${expTotal.toFixed(2)} total)</div>
+      <table class="tbl" style="margin-bottom:1.25rem;">
+        <thead><tr><th>Category</th><th>Description</th><th>Amount</th></tr></thead>
+        <tbody>${dayExp.map(e=>`<tr><td>${EXP_ICON[e.cat]||'📌'} ${e.cat}</td><td>${e.desc}</td><td class="mono red">−${c}${e.amount.toFixed(2)}</td></tr>`).join('')}</tbody>
+      </table>`:''}
+      ${dayShifts.length?`
+      <div class="sec-label">Staff on Shift (${fmtHours(shiftMins)} total)</div>
+      <div>${dayShifts.map(s=>`<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.84rem;"><span>${s.name} <span class="dim">(${s.role})</span></span><span class="mono">${s.timeIn}–${s.timeOut} · ${fmtHours(s.mins)}</span></div>`).join('')}</div>`:''}
+      ${topDrink?`<div style="margin-top:1.25rem;padding:1rem;background:var(--surface2);border-radius:9px;font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;color:var(--text2);text-align:center;">⭐ Top drink: <strong style="color:var(--text)">${topDrink[0]}</strong> — ${topDrink[1]} cups sold</div>`:''}
+    </div>`;
+  toast('✓ Report generated','ok');
+}
+function printReport(){window.print();}
+function confirmClearData(){if(confirm('⚠ This will delete ALL ONE DAY COFFEE data permanently. Are you sure?')){localStorage.clear();location.reload();}}
+
+// ══════════════════════════════════════════════════════
+//  QUOTES
+// ══════════════════════════════════════════════════════
+function initQuotes(){
+  const dots=document.getElementById('quote-dots');if(!dots)return;
+  dots.innerHTML=QUOTES.map((_,i)=>`<div class="q-dot${i===0?' active':''}" onclick="goQuote(${i})"></div>`).join('');
+  goQuote(0);
+  _qTimer=setInterval(()=>goQuote((_qIdx+1)%QUOTES.length),5000);
+}
+function goQuote(i){
+  clearInterval(_qTimer);_qIdx=i;
+  const t=document.getElementById('quote-text'),a=document.getElementById('quote-attr');if(!t||!a)return;
+  t.style.opacity=a.style.opacity='0';
+  setTimeout(()=>{t.textContent='\u201c'+QUOTES[i].text+'\u201d';a.textContent=QUOTES[i].attr;t.style.opacity=a.style.opacity='1';document.querySelectorAll('.q-dot').forEach((d,idx)=>d.classList.toggle('active',idx===i));},320);
+  _qTimer=setInterval(()=>goQuote((_qIdx+1)%QUOTES.length),5000);
+}
+
+
+// ════════════════════════════════════════════════════════════
+//  FEATURE 1: DRINK PHOTO on recipes
+// ════════════════════════════════════════════════════════════
+function handleRecipePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    document.getElementById('rec-photo').value = ev.target.result;
+    const wrap = document.getElementById('photo-preview-wrap');
+    wrap.innerHTML = `<img src="${ev.target.result}" class="photo-preview" alt="Drink photo"><div class="photo-label">Click to change photo</div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearRecipePhoto() {
+  document.getElementById('rec-photo').value = '';
+  document.getElementById('photo-preview-wrap').innerHTML = `<div style="font-size:1.8rem;margin-bottom:.3rem;">📷</div><div class="photo-label">Click to add a drink photo (optional)</div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+//  FEATURE 2: DUPLICATE RECIPE
+// ════════════════════════════════════════════════════════════
+function duplicateRecipe(id, e) {
+  e.stopPropagation();
+  const r = recipes.find(x => x.id === id);
+  if (!r) return;
+  const copy = JSON.parse(JSON.stringify(r));
+  copy.id = Date.now();
+  copy.name = copy.name + ' (Copy)';
+  copy.date = new Date().toLocaleDateString();
+  recipes.unshift(copy);
+  persist(); renderRecList(); updateSaleSel(); renderQuickSell();
+  toast('✓ Duplicated "' + r.name + '"', 'ok');
+}
+
+function deleteRecipe(id, e) {
+  e.stopPropagation();
+  if (!confirm('Delete this recipe?')) return;
+  recipes = recipes.filter(r => r.id !== id);
+  persist(); renderRecList(); updateSaleSel(); renderQuickSell();
+  toast('Recipe deleted');
+}
+
+// ════════════════════════════════════════════════════════════
+//  FEATURE 3: QUICK-SELL BUTTONS
+// ════════════════════════════════════════════════════════════
+function renderQuickSell() {
+  const el = document.getElementById('quick-sell-grid');
+  if (!el) return;
+  if (!recipes.length) {
+    el.innerHTML = '<div class="empty" style="padding:.75rem;grid-column:1/-1;"><span class="empty-ico" style="font-size:1.3rem;">⚡</span><p>Save recipes in Costing to see quick-sell buttons.</p></div>';
+    return;
+  }
+  const c = cur();
+  el.innerHTML = recipes.slice(0, 8).map(r => {
+    const imgHtml = r.photo
+      ? `<img src="${r.photo}" class="qs-btn-img" alt="${r.name}">`
+      : `<div class="qs-btn-img-placeholder">${getCatEmoji(r)}</div>`;
+    return `
+      <div class="qs-btn" onclick="quickSell(${r.id})" id="qs-${r.id}">
+        <div class="qs-sold-flash" id="qs-flash-${r.id}"></div>
+        ${imgHtml}
+        <div class="qs-btn-name">${r.name}</div>
+        <div class="qs-btn-price">${c}${r.sell.toFixed(2)}</div>
+        <div class="qs-btn-size">${r.size}</div>
+      </div>`;
+  }).join('');
+}
+
+function getCatEmoji(r) {
+  if (!r.ings || !r.ings.length) return '☕';
+  const cats = r.ings.map(i => i.cat);
+  if (cats.includes('milk')) return '🥛';
+  if (cats.includes('syrup')) return '🍬';
+  return '☕';
+}
+
+function quickSell(recipeId) {
+  const r = recipes.find(x => x.id === recipeId);
+  if (!r) return;
+  const now = new Date();
+  // Deduct inventory
+  r.ings.forEach(ri => {
+    const iv = inventory[ri.ingId];
+    if (iv) iv.stock = Math.max(0, (iv.stock || 0) - (ri.conv || 0));
+  });
+  sales.push({
+    id: Date.now(), date: now.toISOString().split('T')[0],
+    time: now.toTimeString().slice(0,5), productName: r.name,
+    qty: 1, price: r.sell, cost: r.perCup,
+    revenue: r.sell, totalCost: r.perCup, profit: r.sell - r.perCup
+  });
+  persist(); updateSalesPage(); checkStockAlerts();
+  // Flash animation
+  const flash = document.getElementById('qs-flash-' + recipeId);
+  if (flash) { flash.style.opacity = '1'; setTimeout(() => flash.style.opacity = '0', 400); }
+  toast('⚡ ' + r.name + ' sold!', 'ok');
+}
+
+// ════════════════════════════════════════════════════════════
+//  FEATURE 4: LINE CHART (Monthly Profit Trend)
+// ════════════════════════════════════════════════════════════
+let curAnalyticsTab = 'bar';
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function switchAnalytics(tab) {
+  curAnalyticsTab = tab;
+  const tabs = ['bar', 'line', 'calendar'];
+  document.querySelectorAll('#analytics-bar,#analytics-line,#analytics-calendar').forEach((el, i) => {
+    el.classList.toggle('active', tabs[i] === tab);
+  });
+  // Update inner tab buttons
+  const btns = document.querySelectorAll('.inner-tabs .inner-tab');
+  btns.forEach((b, i) => b.classList.toggle('active', i === tabs.indexOf(tab)));
+
+  if (tab === 'line') renderLineChart(filterSales(curPeriod));
+  if (tab === 'calendar') renderCalendar();
+}
+
+function renderLineChart(f) {
+  const svg = document.getElementById('line-chart-svg');
+  if (!svg) return;
+  if (!f.length) { svg.innerHTML = '<text x="300" y="80" text-anchor="middle" class="lc-axis-label" style="font-size:12px">No data for this period</text>'; return; }
+
+  const groups = {};
+  f.forEach(s => { if (!groups[s.date]) groups[s.date] = {rev:0,profit:0}; groups[s.date].rev += s.revenue; groups[s.date].profit += s.profit; });
+  const entries = Object.entries(groups).sort((a,b) => a[0].localeCompare(b[0]));
+  if (entries.length < 2) { svg.innerHTML = '<text x="300" y="80" text-anchor="middle" class="lc-axis-label" style="font-size:11px">Need at least 2 days of data</text>'; return; }
+
+  const W=600, H=140, padL=40, padR=10, padT=10, padB=25;
+  const chartW=W-padL-padR, chartH=H-padT-padB;
+  const maxVal = Math.max(...entries.map(e=>e[1].rev), 1);
+  const minProfit = Math.min(...entries.map(e=>e[1].profit), 0);
+  const range = maxVal - minProfit || 1;
+
+  const xScale = i => padL + (i / (entries.length-1)) * chartW;
+  const yScale = v => padT + chartH - ((v - minProfit) / range * chartH);
+
+  const revPts = entries.map((e,i) => `${xScale(i)},${yScale(e[1].rev)}`).join(' ');
+  const proPts = entries.map((e,i) => `${xScale(i)},${yScale(e[1].profit)}`).join(' ');
+  const areaPath = `M${xScale(0)},${yScale(0)} ` + entries.map((e,i) => `L${xScale(i)},${yScale(e[1].rev)}`).join(' ') + ` L${xScale(entries.length-1)},${H-padB} L${padL},${H-padB} Z`;
+
+  // Y-axis labels
+  const steps = 4;
+  let yLabels = '';
+  for (let i=0; i<=steps; i++) {
+    const v = minProfit + (range/steps)*i;
+    const y = yScale(v);
+    yLabels += `<text x="${padL-4}" y="${y+3}" text-anchor="end" class="lc-axis-label">${Math.round(v)}</text>`;
+  }
+  // X-axis labels (show every Nth)
+  const skip = Math.ceil(entries.length/7);
+  let xLabels = '';
+  entries.forEach((e,i) => {
+    if (i % skip === 0 || i === entries.length-1) {
+      const d = new Date(e[0]);
+      const lbl = d.toLocaleDateString('en-PH',{month:'short',day:'numeric'});
+      xLabels += `<text x="${xScale(i)}" y="${H-padB+14}" text-anchor="middle" class="lc-axis-label">${lbl}</text>`;
+    }
+  });
+  // Dots for hover
+  const revDots = entries.map((e,i) => `<circle cx="${xScale(i)}" cy="${yScale(e[1].rev)}" r="3" fill="var(--text)" class="lc-dot"><title>${new Date(e[0]).toLocaleDateString()} — Rev: ${cur()}${e[1].rev.toFixed(0)}</title></circle>`).join('');
+  const proDots = entries.map((e,i) => `<circle cx="${xScale(i)}" cy="${yScale(e[1].profit)}" r="2.5" fill="var(--green)" class="lc-dot"><title>${new Date(e[0]).toLocaleDateString()} — Profit: ${cur()}${e[1].profit.toFixed(0)}</title></circle>`).join('');
+  // Zero line if needed
+  const zeroLine = minProfit < 0 ? `<line x1="${padL}" y1="${yScale(0)}" x2="${W-padR}" y2="${yScale(0)}" stroke="var(--border)" stroke-width="1" stroke-dasharray="3"/>` : '';
+
+  svg.innerHTML = `
+    <path d="${areaPath}" fill="var(--text)" class="lc-area"/>
+    ${zeroLine}
+    ${yLabels}${xLabels}
+    <polyline points="${revPts}" class="lc-line-rev"/>
+    <polyline points="${proPts}" class="lc-line-profit"/>
+    ${revDots}${proDots}`;
+
+  const c = cur();
+  const totRev = f.reduce((s,x)=>s+x.revenue,0);
+  const totPr  = f.reduce((s,x)=>s+x.profit,0);
+  const badge = document.getElementById('line-chart-badge');
+  if (badge) badge.innerHTML = `<div>Revenue ${c}${totRev.toFixed(0)}</div><div style="color:${totPr>=0?'var(--green)':'var(--red)'}">${totPr>=0?'+':''}${c}${totPr.toFixed(0)} profit</div>`;
+  const title = document.getElementById('line-chart-title');
+  if (title) title.textContent = {day:"Today's",week:"This Week's",month:"This Month's",all:"All-Time"}[curPeriod] + ' Profit Trend';
+}
+
+// ════════════════════════════════════════════════════════════
+//  FEATURE 5: CALENDAR VIEW
+// ════════════════════════════════════════════════════════════
+function calPrev() { calMonth--; if (calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+function calNext() { calMonth++; if (calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+
+function renderCalendar() {
+  const title = document.getElementById('cal-month-title');
+  const grid  = document.getElementById('cal-grid');
+  if (!title || !grid) return;
+
+  title.textContent = new Date(calYear, calMonth, 1).toLocaleDateString('en-PH', {month:'long', year:'numeric'});
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+
+  // Build revenue map for this month
+  const revMap = {};
+  sales.forEach(s => {
+    const d = new Date(s.date);
+    if (d.getFullYear()===calYear && d.getMonth()===calMonth) {
+      const key = d.getDate();
+      if (!revMap[key]) revMap[key] = {rev:0,profit:0,cups:0};
+      revMap[key].rev    += s.revenue;
+      revMap[key].profit += s.profit;
+      revMap[key].cups   += s.qty;
+    }
+  });
+
+  const maxRev = Math.max(...Object.values(revMap).map(v=>v.rev), 1);
+  const c = cur();
+
+  let cells = '';
+  // Empty cells for first row
+  for (let i=0; i<firstDay; i++) cells += '<div class="cal-cell empty"></div>';
+
+  for (let d=1; d<=daysInMonth; d++) {
+    const data = revMap[d];
+    const isToday = today.getDate()===d && today.getMonth()===calMonth && today.getFullYear()===calYear;
+    const intensity = data ? Math.round((data.rev/maxRev)*4) : 0;
+    const alpha = [0,0.25,0.4,0.65,1][intensity];
+    const bg = data ? `rgba(143,196,143,${alpha})` : 'var(--surface2)';
+    const tooltip = data ? `${d} ${new Date(calYear,calMonth,d).toLocaleDateString('en-PH',{month:'short'})} — ${c}${data.rev.toFixed(0)} rev · ${c}${data.profit.toFixed(0)} profit · ${data.cups} cups` : '';
+    cells += `
+      <div class="cal-cell ${data?'has-sales':''} ${isToday?'today':''}" style="background:${bg}">
+        <div class="cal-day">${d}</div>
+        ${data ? `<div class="cal-rev">${c}${data.rev.toFixed(0)}</div>` : ''}
+        ${tooltip ? `<div class="cal-tooltip">${tooltip}</div>` : ''}
+      </div>`;
+  }
+  grid.innerHTML = cells;
+}
+
+// ════════════════════════════════════════════════════════════
+//  FEATURE 6: ORDER QUEUE SYSTEM
+// ════════════════════════════════════════════════════════════
+let orders = JSON.parse(localStorage.getItem('odc_orders') || '[]');
+let orderCounter = parseInt(localStorage.getItem('odc_order_counter') || '0');
+
+function persistOrders() {
+  localStorage.setItem('odc_orders', JSON.stringify(orders));
+  localStorage.setItem('odc_order_counter', String(orderCounter));
+}
+
+function updateOrderDrinkSel() {
+  const sel = document.getElementById('order-drink');
+  if (!sel) return;
+  const v = sel.value;
+  sel.innerHTML = '<option value="">— Select drink —</option>' +
+    recipes.map(r => `<option value="${r.name}">${r.name} (${r.size})</option>`).join('') +
+    '<option value="__custom__">+ Custom drink</option>';
+  sel.value = v;
+  sel.onchange = function() {
+    document.getElementById('order-custom-wrap').style.display = (this.value==='__custom__') ? 'block' : 'none';
+  };
+}
+
+function addOrder() {
+  const customer = document.getElementById('order-customer').value.trim();
+  const drinkSel = document.getElementById('order-drink').value;
+  const customDrink = document.getElementById('order-custom-name').value.trim();
+  const qty = parseInt(document.getElementById('order-qty').value)||1;
+  const notes = document.getElementById('order-notes').value.trim();
+  if (!customer) { toast('⚠ Enter a customer name','err'); return; }
+  const drink = drinkSel==='__custom__' ? customDrink : drinkSel;
+  if (!drink) { toast('⚠ Select or enter a drink','err'); return; }
+
+  // Reset counter daily
+  const today = new Date().toISOString().split('T')[0];
+  const lastDate = localStorage.getItem('odc_order_date');
+  if (lastDate !== today) { orderCounter = 0; localStorage.setItem('odc_order_date', today); }
+  orderCounter++;
+
+  const now = new Date();
+  orders.push({
+    id: Date.now(), num: orderCounter,
+    customer, drink, qty, notes,
+    time: now.toTimeString().slice(0,5),
+    done: false
+  });
+  persistOrders(); renderOrderQueue();
+  document.getElementById('order-customer').value = '';
+  document.getElementById('order-notes').value = '';
+  document.getElementById('order-qty').value = '1';
+  toast('🧾 Order #' + orderCounter + ' — ' + customer, 'ok');
+}
+
+function markOrderDone(id) {
+  const o = orders.find(x => x.id===id);
+  if (o) { o.done = !o.done; persistOrders(); renderOrderQueue(); }
+}
+
+function clearDoneOrders() {
+  orders = orders.filter(o => !o.done);
+  persistOrders(); renderOrderQueue();
+  toast('Done orders cleared');
+}
+
+function renderOrderQueue() {
+  const el = document.getElementById('order-queue-list');
+  if (!el) return;
+
+  // Filter to today's orders
+  const today = new Date().toISOString().split('T')[0];
+  const todayOrders = orders.filter(o => {
+    // Keep if no date or today's date (orders are same-session)
+    return true; // show all in queue; cleared daily via counter reset
+  });
+
+  const waiting = todayOrders.filter(o=>!o.done).length;
+  const done    = todayOrders.filter(o=>o.done).length;
+  document.getElementById('q-waiting').textContent = waiting;
+  document.getElementById('q-done').textContent    = done;
+  document.getElementById('q-total').textContent   = todayOrders.length;
+
+  if (!todayOrders.length) {
+    el.innerHTML = '<div class="empty"><span class="empty-ico">🧾</span><p>No orders yet. Add one on the right.</p></div>';
+    return;
+  }
+
+  el.innerHTML = [...todayOrders].reverse().map(o => `
+    <div class="order-item ${o.done?'done':''}">
+      <div class="order-number">${o.num}</div>
+      <div style="flex:1;">
+        <div class="order-name">${o.customer}</div>
+        <div class="order-drink">${o.qty > 1 ? o.qty + '× ' : ''}${o.drink}${o.notes ? ' · <em>' + o.notes + '</em>' : ''}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.35rem;">
+        <span class="order-time">${o.time}</span>
+        <button class="order-done-btn" onclick="markOrderDone(${o.id})" ${o.done?'disabled':''}>
+          ${o.done ? '✓ Done' : 'Mark Done'}
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+//  PATCH: Enhanced renderRecList with photo + actions
+// ════════════════════════════════════════════════════════════
+function renderRecList() {
+  const el = document.getElementById('rec-list');
+  if (!recipes.length) {
+    el.innerHTML = `<div class="empty"><span class="empty-ico">📖</span><p>No recipes saved yet.</p></div>`;
+    return;
+  }
+  el.innerHTML = recipes.map(r => {
+    const photoHtml = r.photo
+      ? `<div class="rec-photo-wrap"><img src="${r.photo}" alt="${r.name}"></div>`
+      : `<div class="rec-photo-wrap" style="font-size:1.1rem;">${getCatEmoji(r)}</div>`;
+    return `
+      <div class="rec-card" onclick="loadRecipe(${r.id})">
+        ${photoHtml}
+        <div style="flex:1;min-width:0;">
+          <div class="rec-card-name">${r.name}</div>
+          <div class="rec-card-meta">${r.size} · ${r.ings.length} ings · ${r.date}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div class="rec-card-price">${fmt(r.perCup)}<span style="font-size:.58rem;color:var(--text3)">/cup</span></div>
+          <div class="rec-card-sub">Sell ${fmt(r.sell)}</div>
+          <div class="rec-card-actions">
+            <button class="rec-action-btn" onclick="duplicateRecipe(${r.id},event)" title="Duplicate">⎘ Copy</button>
+            <button class="rec-action-btn" onclick="deleteRecipe(${r.id},event)" title="Delete" style="color:var(--red)">✕</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+//  PATCH: saveRecipe to include photo
+// ════════════════════════════════════════════════════════════
+function saveRecipe() {
+  const name = document.getElementById('rec-name').value.trim();
+  if (!name) { toast('⚠ Enter a drink name','err'); return; }
+  if (!curIngs.length) { toast('⚠ Add ingredients first','err'); return; }
+  const total = curIngs.reduce((s,r) => s+r.lineCost, 0);
+  const yld   = Math.max(1, parseFloat(document.getElementById('rec-yield').value)||1);
+  const ovhd  = (parseFloat(document.getElementById('overhead').value)||0)/100;
+  const mrkp  = (parseFloat(document.getElementById('markup').value)||0)/100;
+  const perCup = (total*(1+ovhd))/yld, sell = perCup*(1+mrkp);
+  const photo  = document.getElementById('rec-photo')?.value || '';
+  recipes.unshift({
+    id: Date.now(), name,
+    size: document.getElementById('rec-size').value,
+    yld, total, perCup, sell,
+    overhead: ovhd*100, markup: mrkp*100,
+    ings: [...curIngs],
+    notes: document.getElementById('rec-notes').value,
+    photo, date: new Date().toLocaleDateString()
+  });
+  persist(); renderRecList(); updateSaleSel(); renderQuickSell();
+  toast('✓ "'+name+'" saved!', 'ok');
+}
+
+// ════════════════════════════════════════════════════════════
+//  PATCH: showPage to include orders
+// ════════════════════════════════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  const pages = ['costing','sales','inventory','expenses','staff','orders','reports'];
+  document.querySelectorAll('.nav-btn').forEach((b,i) => b.classList.toggle('active', pages[i]===name));
+  document.querySelectorAll('.mob-btn').forEach((b,i) => b.classList.toggle('active', pages[i]===name));
+  if (name==='sales')     { updateSalesPage(); renderQuickSell(); }
+  if (name==='inventory') renderInventory();
+  if (name==='expenses')  renderExpenses();
+  if (name==='staff')     renderStaff();
+  if (name==='orders')    { updateOrderDrinkSel(); renderOrderQueue(); }
+}
+
+// ════════════════════════════════════════════════════════════
+//  PATCH: updateSalesPage to also update line+calendar
+// ════════════════════════════════════════════════════════════
+// updateSalesPage — full version defined above
+
+// ════════════════════════════════════════════════════════════
+//  PATCH: clearRecipe to also clear photo
+// ════════════════════════════════════════════════════════════
+// clearRecipe — full version defined above
+function clearRecipe() {
+  curIngs=[];renderCurIngs();recalcCost();
+  document.getElementById('rec-name').value='';
+  document.getElementById('rec-yield').value='1';
+  document.getElementById('rec-notes').value='';
+  clearRecipePhoto();
+}
+
+// updateSalesPage — full version with analytics support
+function updateSalesPage() {
+  const f=filterSales(curPeriod);
+  const totRev=f.reduce((s,x)=>s+x.revenue,0),totCost=f.reduce((s,x)=>s+x.totalCost,0),totProfit=f.reduce((s,x)=>s+x.profit,0),totCups=f.reduce((s,x)=>s+x.qty,0),c=cur();
+  const pLbl={day:'today',week:'this week',month:'this month',all:'all time'}[curPeriod];
+  document.getElementById('kpi-rev').textContent=c+totRev.toFixed(0);
+  document.getElementById('kpi-rev-sub').textContent=totCups+' cups · '+pLbl;
+  document.getElementById('kpi-cost').textContent=c+totCost.toFixed(0);
+  document.getElementById('kpi-cost-sub').textContent=totRev>0?(totCost/totRev*100).toFixed(1)+'% of rev':'—';
+  document.getElementById('kpi-profit').textContent=(totProfit<0?'-':'')+c+Math.abs(totProfit).toFixed(0);
+  document.getElementById('kpi-profit-sub').textContent=totRev>0?(totProfit/totRev*100).toFixed(1)+'% margin':'—';
+  document.getElementById('kpi-cups').textContent=totCups;
+  document.getElementById('kpi-cups-sub').textContent=recipes.length+' recipes';
+  if(curPeriod==='all') renderAllTime();
+  updateGoal();
+  renderChart(f);
+  renderSalesLog(f);
+  renderTopSellers(f);
+  if (curAnalyticsTab==='line')     renderLineChart(f);
+  if (curAnalyticsTab==='calendar') renderCalendar();
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+applyTheme();
+renderIngs();updateIngSel();updatePresets();renderRecList();
+updateSaleSel();initSaleForm();
+updateInvSel();renderInventory();
+renderExpenses();initExpForm();
+renderStaff();initShiftForm();
+initQuotes();recalcCost();calcPreview();checkStockAlerts();
+document.getElementById('report-date').value=new Date().toISOString().split('T')[0];
+renderQuickSell();
+renderCalendar();
+updateOrderDrinkSel();
+
+// Show welcome banner on first ever launch
+if (!localStorage.getItem('odc_launched')) {
+  localStorage.setItem('odc_launched', '1');
+  setTimeout(() => {
+    const el = document.getElementById('toast-el');
+    el.textContent = '☕ Welcome to One Day Coffee!';
+    el.style.background = 'var(--text)';
+    el.style.color = 'var(--bg)';
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3500);
+  }, 800);
+}
+</script>
+</body>
+</html>
